@@ -14,7 +14,6 @@ class Player:
         self.cursed = cursed  ##True means player can only use - or / on next turn
         
 def initGame(numPlayers):
-    global PlayerList
     global Deck
     if numPlayers<1 or numPlayers>4:
         print("Error, can only be played with 1 to 4 players")
