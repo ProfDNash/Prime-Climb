@@ -10,8 +10,11 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 
 @author: David A. Nash
 """
-import applyCard, applyDie, BasicGameData, bumpChecker, cleanPositions, cursePlayer
-import drawACard, moveMapper, sendPlayerHome, takeTurn
+import numpy as np
+from BasicGameData import Player, initGame, rollGenerator
+from takeTurn import takeTurn
+import applyCard, applyDie, bumpChecker, cleanPositions, cursePlayer
+import drawACard, moveMapper, sendPlayerHome
 
 
 def playGame(numPlayers):
@@ -19,7 +22,7 @@ def playGame(numPlayers):
     Primes = [11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97]
     DiscardPile = []
     Deck = np.arange(1,25)
-    PlayerList = initGame(numPlayers)
+    PlayerList, Deck = initGame(numPlayers, Deck)
     
     ##initialize the number of turns counter and the starting player
     nTurns = 0
@@ -27,7 +30,7 @@ def playGame(numPlayers):
     
     ##keep taking turns until someone wins (currPlayer<0)
     while currPlayer>-1 and PlayerList[currPlayer].position[0] != 101:
-        currPlayer = takeTurn(currPlayer,PlayerList, Primes, Deck, DiscardPile)
+        currPlayer, PlayerList, Deck, DiscardPile = takeTurn(currPlayer,PlayerList, Primes, Deck, DiscardPile)
         nTurns += 1
         if nTurns>1000:
             print("Something is wrong")  ##for debugging
