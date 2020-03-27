@@ -12,6 +12,7 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 @author: David A. Nash
 """
 
+
 def applyCard(iP1, card):
     iP2 = np.array([])  ##initialize list of generated positions
     ##cannot apply a card if both pawns are already at the end
