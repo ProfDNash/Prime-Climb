@@ -1,15 +1,18 @@
 """
 CLEAN POSITIONS FUNCTION
-input: iP1 -- a list of potential positions (obtained from applying dice/cards)
+    input: iP1 -- a list of potential positions (obtained from applying dice/cards)
+           Spots -- a list of all positions on the board
+
 This function eliminates any positions which are not allowed (e.g. non-integer, or off the board)
 and also deletes any duplicates
 
 @author: David A. Nash
 """
+import numpy as np
+from itertools import permutations
+from BasicGameData import Player
 
-#import numpy as np
-
-def cleanPositions(iP1):
+def cleanPositions(iP1, Spots):
     iP1.sort(axis=1)  ##make sure positions are always listed in increasing order
     iP1.view('i8,i8,i8').sort(order=['f0','f1'], axis=0)  ##sort them into increasing order (lex)
     deleteRows=np.array([]) ##keep track of things to delete

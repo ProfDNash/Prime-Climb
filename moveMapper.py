@@ -4,6 +4,7 @@ input: roll -- a pair of integers from 0 to 9 (n-1)
        pos -- a pair of integers (a,b) representing the player's current position
        availCards -- a list of ints representing the player's current hand
        curse -- a boolean keeping track of whether the player is currently cursed
+       Spots -- a list of all positions on the board
 
 output: finalPos -- an (?,3) array of triples containing all possible *allowable* positions 
                     the player could move to in columns 0 and 1, and an encoding of which
@@ -14,8 +15,15 @@ Note: (1) In Prime Climb, rolling doubles gives you 4 copies of the value (not 2
 
 @author: David A. Nash
 """
+import numpy as np
+from itertools import permutations
+from BasicGameData import Player
+from applyCard import applyCard
+from applyDie import applyDie
+from cleanPositions import cleanPositions
 
-def moveMapper(roll, pos, availCards, curse):
+
+def moveMapper(roll, pos, availCards, curse, Spots):
     partialFlag = 0  ##a flag keeping track of whether it is possible to win on a partial turn
     ##initialize the array of positions with the current position
     intermediatePos1 = np.array(pos) 
@@ -58,9 +66,9 @@ def moveMapper(roll, pos, availCards, curse):
         for item in order:
             if item[0] == 'c':    ##if the first character is c, apply the given card
                 ##ALSO Keep track of positions without using the card!
-                intermediatePos2 = np.append(intermediatePos2, applyCard(intermediatePos2, int(item[1:])), axis=0)
+                intermediatePos2 = np.append(intermediatePos2, applyCard(intermediatePos2, int(item[1:]), Spots), axis=0)
             else:
-                intermediatePos2 = applyDie(intermediatePos2, int(item), curse)
+                intermediatePos2 = applyDie(intermediatePos2, int(item), curse, Spots)
             if 101 in intermediatePos2[:,0]: ##you can win on a partial turn
                 intermediatePos2 = np.array([101,101,100000000000])
                 partialFlag = 1
@@ -70,7 +78,7 @@ def moveMapper(roll, pos, availCards, curse):
             break
     num = np.int(finalPos.shape[0]/3)  ##count number of possible positions (triples)
     finalPos = finalPos.reshape((num,3))  ##reshape array to (num,3)
-    finalPos = cleanPositions(finalPos) #sort, delete repeats and unallowable positions
+    finalPos = cleanPositions(finalPos, Spots) #sort, delete repeats and unallowable positions
     ##take care of *self* bumping (i.e. if pos[0]==pos[1] then one pawn goes back to start)
     delRow = np.array([])  ##initialize list of rows to delete
     for i in range(finalPos.shape[0]):

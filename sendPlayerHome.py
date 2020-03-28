@@ -12,6 +12,9 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 
 @author: David A. Nash
 """
+import numpy as np
+from itertools import permutations
+from BasicGameData import Player
 
 def sendPlayerHome(card, playerNum, PlayerList, DiscardPile):
     if card !=10 and card != 11:

@@ -11,6 +11,8 @@ output: PlayerList -- updated with a player cursed and a card removed from the c
 
 @author: David A. Nash
 """
+import numpy as np
+from BasicGameData import Player
 
 def cursePlayer(card, playerNum, PlayerList, DiscardPile):
     if card !=12 and card != 13:

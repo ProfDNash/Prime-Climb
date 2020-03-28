@@ -19,6 +19,11 @@ Note: (1) Players only draw a (maximum of 1) card if one of their pawns ends on 
 
 @author: David A. Nash
 """
+import numpy as np
+from itertools import permutations
+from BasicGameData import Player
+from bumpChecker import bumpChecker
+
 
 def drawACard(playerNum,oldPos,newPos,PlayerList,Primes,Deck,DiscardPile):
     rollAgain = 0 ##a flag to denote whether the player drew a "Roll Again" event card
@@ -136,5 +141,5 @@ def drawACard(playerNum,oldPos,newPos,PlayerList,Primes,Deck,DiscardPile):
             newPos[0] = 0
             PlayerList[playerNum].position = newPos
         else:
-            bumpChecker(playerNum)
+            bumpChecker(playerNum, PlayerList)
     return rollAgain, PlayerList, Deck, DiscardPile

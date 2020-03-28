@@ -5,6 +5,7 @@ input: playerNum -- index of current player
        Primes -- a list of the primes from 11 to 97
        Deck -- integer list of cards available to be drawn
        DiscardPile -- integer list of cards in the discard pile
+       Spots -- a list of the possible positions on the board
 
 output: an integer index of the player to take the next turn
         PlayerList -- updated with any changes from the turn
@@ -16,8 +17,15 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 
 @author: David A. Nash
 """
+import numpy as np
+from BasicGameData import Player
+from bumpChecker import bumpChecker
+from cursePlayer import cursePlayer
+from drawACard import drawACard
+from moveMapper import moveMapper
+from sendPlayerHome import sendPlayerHome
 
-def takeTurn(playerNum, PlayerList, Primes, Deck, DiscardPile):
+def takeTurn(playerNum, PlayerList, Primes, Deck, DiscardPile, Spots):
     ##at the start of the turn, randomly decide whether to curse another player (if the card is available)
     curseFlag = 0
     if 12 in PlayerList[playerNum].cards:
@@ -27,18 +35,18 @@ def takeTurn(playerNum, PlayerList, Primes, Deck, DiscardPile):
         curseFlag = np.random.randint(0,2)
         card = 13
     if curseFlag == 1:
-        cursePlayer(card,playerNum)
+        cursePlayer(card,playerNum,PlayerList,DiscardPile)
     
     ##Get the current player position, roll the dice, and generate the possible moves
     pos = PlayerList[playerNum].position
     roll = [np.random.randint(0,10),np.random.randint(0,10)]
-    possibleMoves = moveMapper(roll,pos,PlayerList[playerNum].cards,PlayerList[playerNum].cursed)
+    possibleMoves = moveMapper(roll,pos,PlayerList[playerNum].cards,PlayerList[playerNum].cursed, Spots)
 
     ##choose to win if you can
     if 101 in possibleMoves[:,0]:
         Move = np.array([101,101]).reshape((1,2))
         print("Player ", playerNum, " wins!!!!")
-        return -1*(playerNum+1)
+        return -1*(playerNum+1), PlayerList, Deck, DiscardPile
     ##if 101 is an option for pawn2, don't consider other options
     elif 101 in possibleMoves: 
         TryToWin = np.where(possibleMoves[:,1]==101)[0] ##find indices of moves with 101 as one of the positions
@@ -73,7 +81,7 @@ def takeTurn(playerNum, PlayerList, Primes, Deck, DiscardPile):
     PlayerList[playerNum].position = Move[0:2]
     
     ##Check for bumping, note: self bumping is already achieved in moveMapper
-    bumpChecker(playerNum)
+    bumpChecker(playerNum, PlayerList)
     
     ##undo any curses at the end of the turn
     PlayerList[playerNum].curse = False
@@ -81,10 +89,10 @@ def takeTurn(playerNum, PlayerList, Primes, Deck, DiscardPile):
     ##if the player did not use the send home cards to augment their own move, they can choose to send someone else back
     if 10 in PlayerList[playerNum].cards:
         if np.random.randint(0,2)==1:
-            sendPlayerHome(10,playerNum)
+            sendPlayerHome(10,playerNum,PlayerList,DiscardPile)
     if 11 in PlayerList[playerNum].cards:
         if np.random.randint(0,2)==1:
-            sendPlayerHome(11,playerNum)
+            sendPlayerHome(11,playerNum,PlayerList,DiscardPile)
             
     ## after all actions, check to see if they get to draw a card 
     rollAgain, PlayerList, Deck, DiscardPile = drawACard(playerNum, pos, Move[0:2],PlayerList,Primes,Deck,DiscardPile)
