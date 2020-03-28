@@ -11,7 +11,6 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 @author: David A. Nash
 """
 import numpy as np
-from itertools import permutations
 from BasicGameData import Player, initGame, rollGenerator
 from takeTurn import takeTurn
 
