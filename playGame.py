@@ -14,14 +14,6 @@ import numpy as np
 from itertools import permutations
 from BasicGameData import Player, initGame, rollGenerator
 from takeTurn import takeTurn
-from applyCard import applyCard
-from applyDie import applyDie
-from bumpChecker import bumpChecker
-from cleanPositions import cleanPositions
-from cursePlayer import cursePlayer
-from drawACard import drawACard
-from moveMapper import moveMapper
-from sendPlayerHome import sendPlayerHome
 
 
 def playGame(numPlayers):
