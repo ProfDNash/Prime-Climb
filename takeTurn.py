@@ -6,6 +6,7 @@ input: playerNum -- index of current player
        Deck -- integer list of cards available to be drawn
        DiscardPile -- integer list of cards in the discard pile
        Spots -- a list of the possible positions on the board
+       printData -- a boolean determining whether to print outcomes
 
 output: an integer index of the player to take the next turn
         PlayerList -- updated with any changes from the turn
@@ -25,7 +26,7 @@ from drawACard import drawACard
 from moveMapper import moveMapper
 from sendPlayerHome import sendPlayerHome
 
-def takeTurn(playerNum, PlayerList, Primes, Deck, DiscardPile, Spots):
+def takeTurn(playerNum, PlayerList, Primes, Deck, DiscardPile, Spots, printData):
     ##at the start of the turn, randomly decide whether to curse another player (if the card is available)
     curseFlag = 0
     if 12 in PlayerList[playerNum].cards:
@@ -40,6 +41,8 @@ def takeTurn(playerNum, PlayerList, Primes, Deck, DiscardPile, Spots):
     ##Get the current player position, roll the dice, and generate the possible moves
     pos = PlayerList[playerNum].position
     roll = [np.random.randint(0,10),np.random.randint(0,10)]
+    if printData == True:
+        print('Player {} rolled:'.format(playerNum), roll)
     possibleMoves = moveMapper(roll,pos,PlayerList[playerNum].cards,PlayerList[playerNum].cursed, Spots)
 
     ##choose to win if you can
@@ -79,12 +82,17 @@ def takeTurn(playerNum, PlayerList, Primes, Deck, DiscardPile, Spots):
     
     ##Change the current player's position to the newly chosen one (drop the card encoding)
     PlayerList[playerNum].position = Move[0:2]
+    if printData == True:
+        print('Player {} moves to:'.format(playerNum), Move[0:2])
     
     ##Check for bumping, note: self bumping is already achieved in moveMapper
     bumpChecker(playerNum, PlayerList)
     
     ##undo any curses at the end of the turn
-    PlayerList[playerNum].curse = False
+    if PlayerList[playerNum].cursed == True:
+        PlayerList[playerNum].cursed = False
+        if printData == True:
+            print('Player {} is no longer cursed'.format(playerNum))
     
     ##if the player did not use the send home cards to augment their own move, they can choose to send someone else back
     if 10 in PlayerList[playerNum].cards:

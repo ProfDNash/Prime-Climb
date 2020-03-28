@@ -33,7 +33,7 @@ def sendPlayerHome(card, playerNum, PlayerList, DiscardPile):
                         offStart.append([j,0])
         if len(offStart)>0:  ##then there are pawns to bump which aren't at the start
             ##choose a random player and pawn from the list of options
-            playerChosen, pawnChosen = offStart(np.random.randint(0,len(offStart)))
+            playerChosen, pawnChosen = offStart[np.random.randint(0,len(offStart))]
             ##bump that pawn back to start and discard the card played
             PlayerList[playerChosen].position[pawnChosen]=0
             PlayerList[playerChosen].position.sort() ##re-sort the position into increasing order

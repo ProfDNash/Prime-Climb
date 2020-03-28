@@ -1,6 +1,7 @@
 """
 PLAY GAME FUNCTION
 input: numPlayers -- an integer value of the number of players playing (generally 1-4)
+       printData -- a boolean to determine whether to print outcomes (default is False)
 
 output: nTurns -- the number of turns taken in the game
         winner -- the winner of the game
@@ -15,7 +16,7 @@ from BasicGameData import Player, initGame, rollGenerator
 from takeTurn import takeTurn
 
 
-def playGame(numPlayers):
+def playGame(numPlayers, printData=False):
     ##initialize list of Primes, the Deck, the DiscardPile, and the PlayerList
     Spots = np.arange(102)
     Primes = [11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97]
@@ -32,7 +33,8 @@ def playGame(numPlayers):
         currPlayer, PlayerList, Deck, DiscardPile = takeTurn(currPlayer,
                                                              PlayerList, 
                                                              Primes, Deck,
-                                                             DiscardPile, Spots)
+                                                             DiscardPile, Spots,
+                                                             printData)
         nTurns += 1
         if nTurns>1000:
             print("Something is wrong")  ##for debugging

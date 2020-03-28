@@ -21,9 +21,9 @@ def cursePlayer(card, playerNum, PlayerList, DiscardPile):
         if len(PlayerList)>1:  ##only curse other players if other players exist
             ##choose which player to curse (not self, and cannot already be cursed)
             pToCurse = playerNum
-            while pToCurse == playerNum or PlayerList[pToCurse].curse == True:
+            while pToCurse == playerNum or PlayerList[pToCurse].cursed == True:
                 pToCurse = np.random.randint(0,len(PlayerList))
-            PlayerList[pToCurse].curse = True ##apply the curse
+            PlayerList[pToCurse].cursed = True ##apply the curse
         PlayerList[playerNum].cards.remove(card) ##remove the card from the player's hand
         DiscardPile.append(card)  ##add the card to the discard pile
     return PlayerList, DiscardPile
