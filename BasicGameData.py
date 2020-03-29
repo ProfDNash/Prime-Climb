@@ -13,13 +13,14 @@ class Player:
         self.cards = cards   ##An int list of the cards in the player's hand
         self.cursed = cursed  ##True means player can only use - or / on next turn
         
-def initGame(numPlayers, Deck):
+def initGame(numPlayers):
     if numPlayers<1 or numPlayers>4:
         print("Error, can only be played with 1 to 4 players")
     else:
         PlayerList = [Player([0,0],[], False), Player([0,0],[], False), Player([0,0],[], False), Player([0,0],[], False)]
         PlayerList = PlayerList[:numPlayers]
         ##Shuffle the deck of cards
+        Deck = np.arange(1,25)
         Deck = np.random.permutation(Deck)
     return PlayerList, Deck
 
