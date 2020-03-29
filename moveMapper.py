@@ -62,18 +62,29 @@ def moveMapper(roll, pos, availCards, curse, Spots):
             scheme = keepset
     finalPos = np.array([])  #initialize the array of all complete moves
     for order in scheme:
-        intermediatePos2 = intermediatePos1.reshape((1,3))  ##a distinct copy of the original array
+        impossible = False  ##flag used to eliminate impossible branches
+        #intermediatePos2 = intermediatePos1.reshape((1,3))  ##a distinct copy of the original array
+        intermediatePos2 = np.array([intermediatePos1[0],intermediatePos1[1], intermediatePos1[2]]).reshape((1,3))
         for item in order:
+            #print(intermediatePos2.shape)
             if item[0] == 'c':    ##if the first character is c, apply the given card
                 ##ALSO Keep track of positions without using the card!
                 intermediatePos2 = np.append(intermediatePos2, applyCard(intermediatePos2, int(item[1:]), Spots), axis=0)
             else:
                 intermediatePos2 = applyDie(intermediatePos2, int(item), curse, Spots)
+                ##it is possible (although unlikely) to have no allowable moves
+                ##if so, it should ignore these options
+                if intermediatePos2.shape[0]==0:
+                    impossible=True
+                    break
             if 101 in intermediatePos2[:,0]: ##you can win on a partial turn
                 intermediatePos2 = np.array([101,101,100000000000])
                 partialFlag = 1
                 break
-        finalPos = np.append(finalPos,intermediatePos2)
+        if impossible == False:
+            finalPos = np.append(finalPos,intermediatePos2)
+        else:
+            continue
         if partialFlag == 1:
             break
     num = np.int(finalPos.shape[0]/3)  ##count number of possible positions (triples)
@@ -89,5 +100,8 @@ def moveMapper(roll, pos, availCards, curse, Spots):
                 finalPos[i,0]=0
     ##RE-SORT AND REMOVE DUPLICATES##
     finalPos = np.delete(finalPos, delRow.astype('i8'), axis=0)
+    ##it is possible to have no options, if so, stay put
+    if finalPos.shape[0]==0:
+        finalPos = np.array([pos[0], pos[1], 100000000000]).reshape((1,3))
     finalPos.view('i8,i8,i8').sort(order=['f0','f1'], axis=0)
     return finalPos.astype('i8')
