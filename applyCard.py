@@ -23,6 +23,7 @@ def applyCard(iP1, card, Spots):
     ##cannot apply a card if both pawns are already at the end
     if iP1[0,0]==101:
         print("No need to apply cards... you already won!")  ##for debugging
+        iP2=iP1
     else:
         if 0<card<10:
             ##make sure you only apply cards which haven't already been used

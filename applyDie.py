@@ -24,6 +24,7 @@ def applyDie(iP1,die,curse,Spots):
     iP2 = np.array([]) ##initialize new array of possible positions
     if iP1[0,0]==101:  ##do not allow movement away from position 101
         print("You already won... No need to keep rolling.")  ##for debugging only
+        iP2=iP1
     else:
         ##when cursed, you can only subtract or divide
         iP2 = np.append(iP2, iP1-(die,0,0))
@@ -45,5 +46,5 @@ def applyDie(iP1,die,curse,Spots):
         ##reshape to a list of triples
         iP2 = iP2.reshape((num,3))
         #sort, eliminate duplicates and unallowable positions
-        iP2 = cleanPositions(iP2, Spots) 
+        iP2 = cleanPositions(iP2, Spots)
     return iP2
