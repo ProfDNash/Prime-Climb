@@ -21,8 +21,7 @@ def playGame(numPlayers, printData=False):
     Spots = np.arange(102)
     Primes = [11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97]
     DiscardPile = []
-    Deck = np.arange(1,25)
-    PlayerList, Deck = initGame(numPlayers, Deck)
+    PlayerList, Deck = initGame(numPlayers)
     
     ##initialize the number of turns counter and the starting player
     nTurns = 0
