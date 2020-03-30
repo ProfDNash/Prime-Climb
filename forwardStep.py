@@ -23,6 +23,6 @@ def forwardStep(A_prev, W, b, activation):
     elif activation == 'relu':
         A = relu(Z)
     elif activation == 'softmax':
-        A = softmax(A)
+        A = softmax(Z)
     
     return A, cache
