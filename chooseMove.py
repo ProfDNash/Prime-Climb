@@ -54,7 +54,6 @@ def chooseMove(Xt,roll,parameters, Spots, Rand=False):
             ##use forwardProp predictions to rate the options
             AL, caches = forwardProp(Xnext.reshape((6,1)),parameters)
             score = AL[Xt[5]][0]
-            print(Xnext,score)
             if score > best:
                 best = score
                 bestidx = i
