@@ -9,8 +9,6 @@ Helper functions designed to:
 @author: David A. Nash
 """
 import numpy as np
-from BasicGameData import Player, initGame, rollGenerator
-from takeTurn import takeTurn
 
 ##Randomly Initialize Weights for a given layer with L_in input connections and L_out output ones##
 def randInitWeights(L_in, L_out):
