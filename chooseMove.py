@@ -3,8 +3,10 @@ CHOOSE MOVE FUNCTION
 Select a move from the options available by seeing which maximizes the predicted probability of winning
 
 input: Xprev -- input data from the current turn 
-                [p1.pos1,p1.pos2,p2.pos1,p2.pos2,p1.turn,p2.turn,die1,die2]
+                [p1.pos1,p1.pos2,p2.pos1,p2.pos2,p1.turn,p2.turn]
+       roll -- [die1, die2] for the current player
        parameters -- a dictionary containing parameters for each layer of the network, 'W1', 'b1', etc.
+       Spots -- list of all locations on the board
        Rand -- a boolean determining whether the move chosen is random or predicted
 
 output: Xnext -- new board position based on chosen move (without new rolls generated)
@@ -19,8 +21,8 @@ from moveMapper import moveMapper
 from forwardProp import forwardProp
 
 ##Choose the next position by selecting the maximum potential reward among all possible moves
-def chooseMove(Xt,parameters, Spots, Rand=False):
-    Xnext = np.zeros(8) ##initialize the next game position
+def chooseMove(Xt,roll,parameters, Spots, Rand=False):
+    Xnext = np.zeros(6) ##initialize the next game position
     if Xt[4,0]==1:  ##it's player 0's turn
         pos1 = Xt[0:2,0]
         pos2 = Xt[2:4,0]
@@ -29,7 +31,7 @@ def chooseMove(Xt,parameters, Spots, Rand=False):
         pos1 = Xt[2:4,0]
         pos2 = Xt[0:2,0]
         Xnext[4]=1
-    possMoves = moveMapper(Xt[6:8,0],pos1,[],False, Spots)
+    possMoves = moveMapper(roll,pos1,[],False, Spots)
     
     ##choose the move that has the best average possibility of victory 
     ##(for the current player) over all possible rolls for the next player
@@ -48,21 +50,13 @@ def chooseMove(Xt,parameters, Spots, Rand=False):
             temp.sort() ##sort to ensure they are increasing
             Xnext[2*Xt[4]] = temp[0]
             Xnext[2*Xt[4]+1] = temp[1]
-            total = 0  ##initialize total prediction score across all possible rolls
-            for die1 in range(10):
-                for die2 in range(die1,10):
-                    if die1==die2:
-                        multiplier = 2
-                    else:
-                        multiplier = 1
-                    Xnext[6]=die1
-                    Xnext[7]=die2
-                    AL, caches = forwardProp(Xnext.reshape((8,1)), parameters)
-                    ##Xt[5] == 1 if player 1 is current player, 0 if player 0 is current player##
-                    total += (AL[Xt[5]][0])*multiplier
-            average = total/100
-            if average > best:
-                best = average
+
+            ##use forwardProp predictions to rate the options
+            AL, caches = forwardProp(Xnext.reshape((6,1)),parameters)
+            score = AL[Xt[5]][0]
+            print(Xnext,score)
+            if score > best:
+                best = score
                 bestidx = i
     #else:
     #    bestidx = np.random.randint(0,possMoves.shape[0])
