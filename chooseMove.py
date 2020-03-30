@@ -30,12 +30,9 @@ def chooseMove(Xt,parameters, Spots, Rand=False):
         pos2 = Xt[0:2,0]
         Xnext[4]=1
     possMoves = moveMapper(Xt[6:8,0],pos1,[],False, Spots)
-    #if 101 in possMoves[:,0]:
-    #    Xnext[2*Xt[5]] = 101
-    #    Xnext[2*Xt[5]+1] = 101
-    #    Xnext[2*Xt[4]] = pos2[0]
-    #    Xnext[2*Xt[4]+1] = pos2[1]
-    #else:  ##choose the move that has the best average possibility of victory (for the current player) over all possible turns for the next player
+    
+    ##choose the move that has the best average possibility of victory 
+    ##(for the current player) over all possible rolls for the next player
     if Rand == False:
         best = 0 ##initialize best win probability
         bestidx = 0  ##initialize index of best move
