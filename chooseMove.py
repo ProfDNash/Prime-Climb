@@ -19,7 +19,7 @@ from moveMapper import moveMapper
 from forwardProp import forwardProp
 
 ##Choose the next position by selecting the maximum potential reward among all possible moves
-def chooseMove(Xt,parameters, Rand):
+def chooseMove(Xt,parameters, Spots, Rand=False):
     Xnext = np.zeros(8) ##initialize the next game position
     if Xt[4,0]==1:  ##it's player 0's turn
         pos1 = Xt[0:2,0]
@@ -29,8 +29,7 @@ def chooseMove(Xt,parameters, Rand):
         pos1 = Xt[2:4,0]
         pos2 = Xt[0:2,0]
         Xnext[4]=1
-    possMoves = moveMapper(Xt[6:8,0],pos1,[],False)
-    print(possMoves)
+    possMoves = moveMapper(Xt[6:8,0],pos1,[],False, Spots)
     #if 101 in possMoves[:,0]:
     #    Xnext[2*Xt[5]] = 101
     #    Xnext[2*Xt[5]+1] = 101
@@ -45,9 +44,9 @@ def chooseMove(Xt,parameters, Rand):
             Xnext[2*Xt[5]+1] = possMoves[i,1]
             temp = [0,0] ##initialize temp position for the next player
             ##check for bumping based on chosen move for current player##
-            if pos2[0] not in possMoves[i,0:2]:
+            if pos2[0] not in possMoves[i,0:2] or pos2[0]!=101:
                 temp[0]=pos2[0]
-            if pos2[1] not in possMoves[i,0:2]:
+            if pos2[1] not in possMoves[i,0:2] or pos2[1]!=101:
                 temp[1]=pos2[1]
             temp.sort() ##sort to ensure they are increasing
             Xnext[2*Xt[4]] = temp[0]
@@ -61,25 +60,28 @@ def chooseMove(Xt,parameters, Rand):
                         multiplier = 1
                     Xnext[6]=die1
                     Xnext[7]=die2
-                    AL, caches = forwardProp(Xnext, parameters)
+                    AL, caches = forwardProp(Xnext.reshape((8,1)), parameters)
                     ##Xt[5] == 1 if player 1 is current player, 0 if player 0 is current player##
-                    total += AL[Xt[5]]*multiplier
+                    total += (AL[Xt[5]][0])*multiplier
             average = total/100
             if average > best:
                 best = average
                 bestidx = i
     #else:
     #    bestidx = np.random.randint(0,possMoves.shape[0])
-    #Xnext[2*Xt[5]] = possMoves[bestidx,0]
-    #Xnext[2*Xt[5]+1] = possMoves[bestidx,1]
-    #temp = [0,0]
-    #if pos2[0] not in possMoves[bestidx,0:2] or pos2[0]==101:
-    #    temp[0]=pos2[0]
-    #if pos2[1] not in possMoves[bestidx,0:2] or pos2[1]==101:
-    #    temp[1]=pos2[1]
-    #temp.sort()
-    #Xnext[2*Xt[4]] = temp[0]
-    #Xnext[2*Xt[4]+1] = temp[1]
+    
+    ##choose best option
+    Xnext[2*Xt[5]] = possMoves[bestidx,0]
+    Xnext[2*Xt[5]+1] = possMoves[bestidx,1]
+    ##checking for bumping##
+    temp = [0,0]
+    if pos2[0] not in possMoves[bestidx,0:2] or pos2[0]==101:
+        temp[0]=pos2[0]
+    if pos2[1] not in possMoves[bestidx,0:2] or pos2[1]==101:
+        temp[1]=pos2[1]
+    temp.sort()
+    Xnext[2*Xt[4]] = temp[0]
+    Xnext[2*Xt[4]+1] = temp[1]
     
     ##reshape Xnext to be a column vector
     Xnext = Xnext.reshape((len(Xnext),1))
