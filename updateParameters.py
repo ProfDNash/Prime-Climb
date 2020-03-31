@@ -14,10 +14,9 @@ output: parameters -- updated based on outcome in the current time-step
 """
 import numpy as np
 
-def updateParameters(Yt, Yprev, turn, grads, parameters, lambd=0, alpha=1):
+def updateParameters(Yt, Yprev, turn, grads, parameters, lambd=0, alpha=10):
     
     L = len(parameters)//2  ##number of layers
-    m = Yt.shape[1]
     dim = Yt.shape[0] ##size of final output layer
     deltas = {}  ##initialize dictionary for final adjustments to weights
     scale = np.sum(alpha*(Yt - Yprev))
@@ -25,13 +24,13 @@ def updateParameters(Yt, Yprev, turn, grads, parameters, lambd=0, alpha=1):
     
     ##loop through layers
     for l in range(L):
-        deltaWl = np.zeros((grads['dW'+str(l)].shape))
-        deltabl= np.zeros((grads['db'+str(l)].shape))
+        deltaWl = np.zeros((grads['dW'+str(l+1)].shape))
+        deltabl= np.zeros((grads['db'+str(l+1)].shape))
         for k in range(turn):
-            deltaWl += lambd**(turn-k) * grads['dW'+str(l)]
-            deltabl += lambd**(turn-k) * grads['db'+str(l)]
+            deltaWl += lambd**(turn-k) * grads['dW'+str(l+1)]
+            deltabl += lambd**(turn-k) * grads['db'+str(l+1)]
         ##update parameters
-        parameters['W'+str(l)] += scale*deltaWl
-        parameters['b'+str(l)] += scale*deltab1
+        parameters['W'+str(l+1)] += scale*deltaWl
+        parameters['b'+str(l+1)] += scale*deltabl
     
     return parameters
