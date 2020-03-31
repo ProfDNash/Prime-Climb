@@ -7,7 +7,7 @@ input: A_prev -- an np.array of activations from the previous layer, shape (size
        activiation -- a string calling either 'sigmoid', 'relu', or 'softmax' activation
 
 output: A -- activations for the current layer
-        cache -- a cache of (Z, W, and b) for the current layer to make backpropagation easier later
+        cache -- a cache of (A_prev, W, b, and Z) for the current layer to make backpropagation easier later
 
 @author: David A. Nash
 """
@@ -16,7 +16,7 @@ from NNutils import sigmoid, relu, softmax
 
 def forwardStep(A_prev, W, b, activation):
     Z = np.dot(W,A_prev)+b
-    cache = (Z, W, b)
+    cache = (A_prev, W, b, Z)
     
     if activation == 'sigmoid':
         A = sigmoid(Z)
