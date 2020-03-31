@@ -1,24 +1,44 @@
 """
 BACKPROPAGATION FUNCTION
-input: A_prev -- an np.array of activations from the previous layer, shape (size of previous layer, 1)
-       cache -- tuple containing A_prev, W, b, Z from current layer from forward prop
-       activiation -- a string calling either 'sigmoid', 'relu', or 'softmax' activation
+input: AL -- an np.array of activations from the final layer
+       caches -- tuple containing the forward prop cache (A_prev, W, b, Z) from each layer
 
-output: dA_prev -- gradient of the cost with respect to activation of previous layer
-        dW -- gradient of cost with respect to W in current layer
-        db -- gradient of cost with respect to b in current layer
+output: grads -- a dictionary containing gradients of prediction for dA, dW, db, in each layer
 
 @author: David A. Nash
 """
 import numpy as np
-from backProp import backStep
+from backStep import backStep
 
-def backProp(AL, Y, caches):
+def backProp(AL, caches):
     
     grads = {} ##initialize dictionary for gradients
     L = len(caches)  ##number of layers
+    current_cache = caches[L-1]  ##cache for final layer
+    A_prev, W, b, Z = current_cache
+    
     m = AL.shape[1]
+    dim = AL.shape[0] ##size of final output layer
+    ##note, we're not taking derivative of cost... just of the prediction function, 
+    ##so dAL=1, and we'll spit back dZ
+    dAL = np.zeros(AL.shape)  ##initialize array to collect derivatives
     
-   
+    ##Last activation is softmax, so derivative with respect to Zi is
+    ##Zi(1-Zi) in the ith slot, and -ZiZj in the other slots
+    for i in range(dim):
+        dALi = -Z*Z[i]
+        dALi[i] += Z[i]
+        dAL += dALi
     
-    return 
+    grads['dA'+str(L-1)], grads['dW'+str(L)],grads['db'+str(L)] = backStep(dAL, current_cache, 'softmax')
+    
+    ##loop through the rest of the layers
+    for l in reversed(range(L-1)):
+        ##other layers are Linear + ReLU
+        current_cache = caches[l]
+        dA_prev, dW, db = backStep(grads['dA'+str(l+1)],current_cache,'relu')
+        grads['dA'+str(l)] = dA_prev
+        grads['dW'+str(l+1)] = dW
+        grads['db'+str(l+1)] = db
+    
+    return grads
