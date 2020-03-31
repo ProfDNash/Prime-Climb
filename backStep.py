@@ -1,6 +1,6 @@
 """
 BACK STEP FUNCTION
-Perform one layer of forward propagation
+Perform one layer of back propagation
 input: A_prev -- an np.array of activations from the previous layer, shape (size of previous layer, 1)
        cache -- tuple containing A_prev, W, b, Z from current layer from forward prop
        activiation -- a string calling either 'sigmoid', 'relu', or 'softmax' activation
