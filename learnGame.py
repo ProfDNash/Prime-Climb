@@ -23,10 +23,10 @@ from backProp import backProp
 def learnGame(parameters, lambd):
     ##initialize the beginning of the game##
     Xt = np.array([0,0,0,0,1,0]).reshape((6,1))
-    Xlist = np.array(Xt, copy=1).reshape((6,1))
+    Xlist = np.array(Xt, copy=True).reshape((6,1))
     ##initialize array to keep track of the prediction at each turn
-    Ylist, caches = forwardProp(Xt, parameters)
-    Ylist = np.array(Ylist).reshape((2,1))
+    Y0, caches = forwardProp(Xt, parameters)
+    Ylist = np.array(Y0, copy=True).reshape((2,1))
     
     turn = 0 ##initialize turn number
     winner = 0 ##index of winner
@@ -38,6 +38,8 @@ def learnGame(parameters, lambd):
         Xt = chooseMove(Xt, roll, parameters, np.arange(102), False)
         Xlist = np.append(Xlist, Xt, axis=1)
         Yt, caches = forwardProp(Xt,parameters)
+        grads = backProp(Yt, caches)
+        
         Yt = np.array(Yt).reshape((2,1))
         Ylist = np.append(Ylist,Yt, axis=1)
         #print('Turn: ', turn,'Roll: ', roll, 'Move: ',Xt.T)
