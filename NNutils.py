@@ -23,7 +23,7 @@ def randInitWeights(layer_dims):
     epsilon_init=0.12
     
     for l in range(1,L):
-        parameters['W'+str(l)] = np.random.randn(layer_dims[l],layer_dims[l-1])*2*epsilon_init - epsilon_init
+        parameters['W'+str(l)] = np.random.randn(layer_dims[l],layer_dims[l-1])*2*epsilon_init# - epsilon_init
         parameters['b'+str(l)] = np.zeros((layer_dims[l],1))
     
     return parameters
