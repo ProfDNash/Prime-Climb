@@ -18,6 +18,7 @@ output: Xnext -- new board position based on chosen move (without new rolls gene
 import numpy as np
 from chooseMove import chooseMove
 from forwardProp import forwardProp
+from backProp import backProp
 
 def learnGame(parameters, lambd):
     ##initialize the beginning of the game##
@@ -43,4 +44,4 @@ def learnGame(parameters, lambd):
     
     if Xt[2,-1]==101: winner = 1  ##change index if player 1 wins
     
-    return Xlist, Ylist
+    return Xlist, Ylist, turn
