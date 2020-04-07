@@ -38,7 +38,7 @@ def relu(z):
 
 ##Softmax Function##
 def softmax(X):
-    '''Take vector X and return softmax'''
-    denom = np.sum(np.exp(X))
-    X = np.exp(X)/denom
+    '''Take vector X and return numerically stable softmax'''
+    e_x = np.exp(X - np.max(X))
+    X = e_x/np.sum(e_x)
     return X
