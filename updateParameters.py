@@ -18,14 +18,15 @@ def updateParameters(Yt, Yprev, turn, grads, parameters, lambd=0, alpha=10):
     
     L = len(parameters)//2  ##number of layers
     dim = Yt.shape[0] ##size of final output layer
-    deltas = {}  ##initialize dictionary for final adjustments to weights
-    scale = np.sum(alpha*(Yt - Yprev))
+    #deltas = {}  ##initialize dictionary for final adjustments to weights
+    scale = Yt[0] - Yprev[0]#np.sum(alpha*(Yt - Yprev))
     
     
     ##loop through layers
     for l in range(L):
         deltaWl = np.zeros((grads['dW'+str(l+1)].shape))
         deltabl= np.zeros((grads['db'+str(l+1)].shape))
+        ##sum over memory
         for k in range(turn):
             deltaWl += lambd**(turn-k) * grads['dW'+str(l+1)]
             deltabl += lambd**(turn-k) * grads['db'+str(l+1)]
