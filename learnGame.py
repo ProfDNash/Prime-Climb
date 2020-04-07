@@ -3,14 +3,14 @@ LEARN GAME FUNCTION
 Play a single (2-player) game using the NN to choose moves at each turn
 Learn parameters as play proceeds using temporal difference model
 
-input: Xprev -- input data from the current turn 
-                [p1.pos1,p1.pos2,p2.pos1,p2.pos2,p1.turn,p2.turn]
-       roll -- [die1, die2] for the current player
-       parameters -- a dictionary containing parameters for each layer of the network, 'W1', 'b1', etc.
+input: parameters -- a dictionary containing parameters for each layer of the network, 'W1', 'b1', etc.
        lambd -- parameter controlling the network's *memory* (lambd==1 perfect memory)
-       Rand -- a boolean determining whether the move chosen is random or predicted
+       alpha -- learning rate parameter
 
-output: Xnext -- new board position based on chosen move (without new rolls generated)
+output: Xlist -- list of all board positions throughout the game (for analysis if necessary)
+        Ylist -- list of all predictions throughout the game (for analysis if necessary)
+        turn -- # of turns that the game took to completion
+        parameters -- updated parameters based on learning from one game
 
 
 @author: David A. Nash
@@ -19,8 +19,9 @@ import numpy as np
 from chooseMove import chooseMove
 from forwardProp import forwardProp
 from backProp import backProp
+from updateParameters import updateParameters
 
-def learnGame(parameters, lambd):
+def learnGame(parameters, lambd, alpha):
     ##initialize the beginning of the game##
     Xt = np.array([0,0,0,0,1,0]).reshape((6,1))
     Xlist = np.array(Xt, copy=True).reshape((6,1))
@@ -39,6 +40,7 @@ def learnGame(parameters, lambd):
         Xlist = np.append(Xlist, Xt, axis=1)
         Yt, caches = forwardProp(Xt,parameters)
         grads = backProp(Yt, caches)
+        parameters = updateParameters(Yt,Ylist[:,turn-1],turn,grads,parameters,lambd,alpha)
         
         Yt = np.array(Yt).reshape((2,1))
         Ylist = np.append(Ylist,Yt, axis=1)
@@ -46,4 +48,4 @@ def learnGame(parameters, lambd):
     
     if Xt[2,-1]==101: winner = 1  ##change index if player 1 wins
     
-    return Xlist, Ylist, turn
+    return Xlist, Ylist, turn, parameters
