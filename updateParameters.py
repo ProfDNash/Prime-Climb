@@ -14,7 +14,7 @@ output: parameters -- updated based on outcome in the current time-step
 """
 import numpy as np
 
-def updateParameters(Yt, Yprev, turn, grads, parameters, lambd=0, alpha=10):
+def updateParameters(Yt, Yprev, turn, grads, parameters, lambd=0, alpha=0.1):
     
     L = len(parameters)//2  ##number of layers
     dim = Yt.shape[0] ##size of final output layer
