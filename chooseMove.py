@@ -43,10 +43,10 @@ def chooseMove(Xt,roll,parameters, Spots=np.arange(0,102), Rand=False):
             if score > best:
                 best = score
                 bestidx = i
-    else:
+    else: ##choose a random move -- for exploration during training
         bestidx = np.random.randint(0,possMoves.shape[0])
     
-    ##choose best option
+    ##return the chosen move
     Xnext = Xt.copy()
     Xnext[2*idx:2*idx+2,0] = possMoves[bestidx,0:2]
     Xnext = bump(Xnext) ##check for bumping
