@@ -24,5 +24,7 @@ def forwardStep(A_prev, W, b, activation):
         A = relu(Z)
     elif activation == 'softmax':
         A = softmax(Z)
+    elif activation == 'final':  ##new option for exploring 
+        A = softmax(Z)
     
     return A, cache
