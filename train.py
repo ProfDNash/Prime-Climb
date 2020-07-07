@@ -9,7 +9,7 @@ input: parameters -- a dictionary containing parameters for each layer of the ne
 
 output: winners -- an array counting of the number of wins for each player
         turns -- an list containing the number of turns for each game
-        parameters -- updated parameters based on learning from one game
+        params -- updated parameters based on learning from one game
 
 
 @author: David A. Nash
@@ -17,14 +17,17 @@ output: winners -- an array counting of the number of wins for each player
 import numpy as np
 from learnGame import learnGame
 
-def train(parameters, lambd=0, alpha=0.1, numGames=5):
+def train(parameters, lambd=0, alpha=0.01, numGames=10):
     ##initialize counters
     winners = np.array([0,0])
     turns = list()
     params=parameters.copy()
     eps = 0.99 ##parameter to allow for random exploration in early games
     for g in range(numGames):
+        if g%100==0: print('Game:',g)
         Xlist, Ylist, turn, params, winner = learnGame(params, lambd, alpha, eps)
         turns.append(turn)
         winners[winner] += 1
         eps *= eps
+        
+    return winners, turns, params
