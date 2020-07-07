@@ -25,8 +25,8 @@ def forwardProp(Xt, parameters):
         A, cache = forwardStep(A_prev,parameters['W'+str(l)],parameters['b'+str(l)],'relu')
         caches.append(cache)
     
-    ##For layer L, compute softmax
-    AL, cache = forwardStep(A, parameters['W'+str(L)], parameters['b'+str(L)],'softmax')
+    ##For layer L, compute sigmoid
+    AL, cache = forwardStep(A, parameters['W'+str(L)], parameters['b'+str(L)],'sigmoid')
     caches.append(cache)
 
     return AL, caches
