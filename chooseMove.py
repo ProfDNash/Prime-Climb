@@ -46,9 +46,13 @@ def chooseMove(Xt,roll,parameters, Spots=np.arange(0,102), Rand=False):
     else: ##choose a random move -- for exploration during training
         bestidx = np.random.randint(0,possMoves.shape[0])
     
-    ##return the chosen move
+    ##return the chosen move with player turn changed
     Xnext = Xt.copy()
     Xnext[2*idx:2*idx+2,0] = possMoves[bestidx,0:2]
     Xnext = bump(Xnext) ##check for bumping
+    ##finally, change whose turn it is
+    Xnext[2*n+idx,0] = 0
+    idx = (idx + 1)%n
+    Xnext[2*n+idx,0] = 1
     
     return Xnext
