@@ -1,6 +1,6 @@
 """
 APPLYDIE FUNCTION
-input: iP1 -- a list of positions
+input: iP1 -- a (1,2)-array containing a single position
        die -- a single int value from 0 to 9 (n-1)
        curse -- a boolean keeping track of whether the player is currently cursed
        Spots -- a list of all positions on the board
@@ -29,7 +29,7 @@ def applyDie(iP1,die,curse=False,Spots=np.arange(102)):
     
     iP2 = np.array([]) ##initialize new array of possible positions
     if iP1[0,0]==101:  ##do not allow movement away from position 101
-        print("You already won... No need to keep rolling.")  ##for debugging only
+        #print("You already won... No need to keep rolling.")  ##for debugging only
         iP2=iP1
     else:
         ##when cursed, you can only subtract or divide
