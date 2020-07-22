@@ -1,7 +1,7 @@
 """
 CLEAN POSITIONS FUNCTION
     input: iP1 -- a list of potential positions (obtained from applying dice/cards)
-           Spots -- a list of all positions on the board
+           Spots -- a list of all positions on the board, typically [0,1,...,101]
 
 This function eliminates any positions which are not allowed (e.g. non-integer, or off the board)
 and also deletes any duplicates
@@ -12,9 +12,12 @@ import numpy as np
 from itertools import permutations
 from BasicGameData import Player
 
-def cleanPositions(iP1, Spots):
+def cleanPositions(iP1, Spots=np.arange(102)):
     iP1.sort(axis=1)  ##make sure positions are always listed in increasing order
-    iP1.view('i8,i8,i8').sort(order=['f0','f1'], axis=0)  ##sort them into increasing order (lex)
+    if iP1.shape[1]>2:  ##when considering cards, there is a third value to keep track of
+        iP1.view('float,float,float').sort(order=['f0','f1'], axis=0)  ##sort them into increasing order (lex)
+    else:
+        iP1.view('float,float').sort(order=['f0'], axis=0) ##sort them into increasing order (lex)
     deleteRows=np.array([]) ##keep track of things to delete
     compareRow=0 ##current row we're comparing to (for repeats)
     for i in range(iP1.shape[0]):
