@@ -17,33 +17,41 @@ import numpy as np
 from BasicGameData import Player
 from cleanPositions import cleanPositions
 
-def applyDie(iP1,die,curse,Spots):
+def applyDie(iP1,die,curse=False,Spots=np.arange(102)):
     if die==0: ##A roll of zero corresponds to the value 10
         die=10
+    ##add a way to deal with the possibility of cards and no cards simultaneously
+    c = iP1.shape[1] ##2 if no cards, 3 if allowing cards
+    adder1 = (die,0,0)
+    adder2 = (0,die,0)
+    mult1 = (die,1,1)
+    mult2 = (1,die,1)
+    
     iP2 = np.array([]) ##initialize new array of possible positions
     if iP1[0,0]==101:  ##do not allow movement away from position 101
         print("You already won... No need to keep rolling.")  ##for debugging only
         iP2=iP1
     else:
         ##when cursed, you can only subtract or divide
-        iP2 = np.append(iP2, iP1-(die,0,0))
-        iP2 = np.append(iP2, iP1/(die,1,1))
+        iP2 = np.append(iP2, iP1-adder1[:c])
+        iP2 = np.append(iP2, iP1/mult1[:c]
         ##if not cursed, you can also add or multiply
         if curse==False:  
-            iP2 = np.append(iP2, iP1+(die,0,0))
-            iP2 = np.append(iP2, iP1*(die,1,1))
+            iP2 = np.append(iP2, iP1+adder1[:c])
+            iP2 = np.append(iP2, iP1*mult1[:c]
         ##do not allow movement away from position 101 in the second position either
         if iP1[0,1]!=101: 
             ##when cursed, you can only subtract or divide
-            iP2 = np.append(iP2, iP1-(0,die,0))
-            iP2 = np.append(iP2, iP1/(1,die,1))
+            iP2 = np.append(iP2, iP1-adder2[:c]
+            iP2 = np.append(iP2, iP1/mult2[:c]
             ##if not cursed, you can also add or multiply
             if curse==False:  
-                iP2 = np.append(iP2, iP1+(0,die,0))
-                iP2 = np.append(iP2, iP1*(1,die,1))
-        num = np.int(iP2.shape[0]/3)  ##count the number of new positions (represented as triples)
-        ##reshape to a list of triples
-        iP2 = iP2.reshape((num,3))
+                iP2 = np.append(iP2, iP1+adder2[:c]
+                iP2 = np.append(iP2, iP1*mult2[:c]
+        ##count the number of new positions (represented as c-tuples)
+        num = np.int(iP2.shape[0]/c)  
+        ##reshape to a list of c-tuples
+        iP2 = iP2.reshape((num,c))
         #sort, eliminate duplicates and unallowable positions
-        iP2 = cleanPositions(iP2, Spots)
+        iP2 = cleanPositions(iP2)
     return iP2
