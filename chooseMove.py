@@ -18,6 +18,7 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 """
 import numpy as np
 from moveMapper import moveMapper
+from moveGenerator import simpleMove
 from forwardProp import forwardProp
 from bump import bump
 
@@ -27,7 +28,8 @@ def chooseMove(Xt,roll,parameters, Spots=np.arange(0,102), Rand=False):
     order = Xt[-n:,0] ##array of one-hots for current player
     idx = np.where(order==1)[0][0] ##index of current player
     pos1 = Xt[2*idx:2*idx+2,0] ##position of current player
-    possMoves = moveMapper(roll,pos1,[],False, Spots)
+    #possMoves = moveMapper(roll,pos1,[],False, Spots)
+    possMoves = simpleMove(roll,pos1)
     
     ##choose the move that has the highest prediction value for the current player
     if Rand == False:
