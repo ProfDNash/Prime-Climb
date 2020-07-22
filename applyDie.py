@@ -34,20 +34,20 @@ def applyDie(iP1,die,curse=False,Spots=np.arange(102)):
     else:
         ##when cursed, you can only subtract or divide
         iP2 = np.append(iP2, iP1-adder1[:c])
-        iP2 = np.append(iP2, iP1/mult1[:c]
+        iP2 = np.append(iP2, iP1/mult1[:c])
         ##if not cursed, you can also add or multiply
         if curse==False:  
             iP2 = np.append(iP2, iP1+adder1[:c])
-            iP2 = np.append(iP2, iP1*mult1[:c]
+            iP2 = np.append(iP2, iP1*mult1[:c])
         ##do not allow movement away from position 101 in the second position either
         if iP1[0,1]!=101: 
             ##when cursed, you can only subtract or divide
-            iP2 = np.append(iP2, iP1-adder2[:c]
-            iP2 = np.append(iP2, iP1/mult2[:c]
+            iP2 = np.append(iP2, iP1-adder2[:c])
+            iP2 = np.append(iP2, iP1/mult2[:c])
             ##if not cursed, you can also add or multiply
             if curse==False:  
-                iP2 = np.append(iP2, iP1+adder2[:c]
-                iP2 = np.append(iP2, iP1*mult2[:c]
+                iP2 = np.append(iP2, iP1+adder2[:c])
+                iP2 = np.append(iP2, iP1*mult2[:c])
         ##count the number of new positions (represented as c-tuples)
         num = np.int(iP2.shape[0]/c)  
         ##reshape to a list of c-tuples
