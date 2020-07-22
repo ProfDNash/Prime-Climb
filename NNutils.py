@@ -21,7 +21,7 @@ def randInitWeights(layer_dims, pos):
     '''
     parameters = {} ##initialize empty dictionary
     L = len(layer_dims)  ##number of layers (including the input layer)
-    epsilon_init=0.06
+    epsilon_init=0.001
     
     for l in range(1,L):
         parameters['W'+str(l)] = np.random.randn(layer_dims[l],layer_dims[l-1])*2*epsilon_init
