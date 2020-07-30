@@ -22,11 +22,11 @@ def forwardProp(Xt, parameters):
     
     for l in range(1,L):
         A_prev = A
-        A, cache = forwardStep(A_prev,parameters['W'+str(l)],parameters['b'+str(l)],'relu')
+        A, cache = forwardStep(A_prev,parameters['W'+str(l)],parameters['b'+str(l)],'leaky')
         caches.append(cache)
     
     ##For layer L, compute sigmoid
-    AL, cache = forwardStep(A, parameters['W'+str(L)], parameters['b'+str(L)],'sigmoid')
+    AL, cache = forwardStep(A, parameters['W'+str(L)], parameters['b'+str(L)],'leaky')
     caches.append(cache)
 
     return AL, caches
