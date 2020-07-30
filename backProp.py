@@ -34,13 +34,13 @@ def backProp(AL, ALt, caches):
     #    dAL += dALi
     
     
-    grads['dA'+str(L-1)], grads['dW'+str(L)],grads['db'+str(L)] = backStep(dAL, current_cache, 'sigmoid')
+    grads['dA'+str(L-1)], grads['dW'+str(L)],grads['db'+str(L)] = backStep(dAL, current_cache, 'leaky')
     
     ##loop through the rest of the layers
     for l in reversed(range(L-1)):
         ##other layers are Linear + ReLU
         current_cache = caches[l]
-        dA_prev, dW, db = backStep(grads['dA'+str(l+1)],current_cache,'relu')
+        dA_prev, dW, db = backStep(grads['dA'+str(l+1)],current_cache,'leaky')
         grads['dA'+str(l)] = dA_prev
         grads['dW'+str(l+1)] = dW
         grads['db'+str(l+1)] = db
