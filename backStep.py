@@ -28,6 +28,9 @@ def backStep(dA, cache, activation):
         dZ = dA*s*(1-s)
     elif activation == 'softmax':
         dZ=dA  ##if we are in the final layer with softmax, dA input will be exactly dZ
+    elif activation == 'leaky':
+        dZ = np.array(dA, copy=True)
+        dZ[Z<=0] *= 0.1
        
     
     ##then take linear part of the derivative
