@@ -38,6 +38,10 @@ def sigmoid(z):
 def relu(z):
     return np.maximum(0,z)
 
+##Vectorized Leaky ReLU Function##
+def leaky(z):
+    return np.maximum(0.1*z,z)
+
 ##Softmax Function##
 def softmax(X):
     '''Take vector X and return numerically stable softmax'''
