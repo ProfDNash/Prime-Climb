@@ -17,7 +17,6 @@ Note: (1) In Prime Climb, rolling doubles gives you 4 copies of the value (not 2
 """
 import numpy as np
 from itertools import permutations
-from BasicGameData import Player
 from applyCard import applyCard
 from applyDie import applyDie
 from cleanPositions import cleanPositions

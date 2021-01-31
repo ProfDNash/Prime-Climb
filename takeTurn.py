@@ -19,7 +19,6 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 @author: David A. Nash
 """
 import numpy as np
-from BasicGameData import Player
 from bumpChecker import bumpChecker
 from cursePlayer import cursePlayer
 from drawACard import drawACard

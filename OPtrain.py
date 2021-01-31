@@ -15,7 +15,6 @@ output: turns -- an list containing the number of turns for each game
 
 @author: David A. Nash
 """
-import numpy as np
 import pickle
 from onePlayer import onePlayerGame
 
