@@ -69,8 +69,8 @@ def takeTurn(playerNum, PlayerList, Primes, Deck, DiscardPile, Spots, printData)
         bestMove = possibleMoves[matches[0],:]
         ##It may be possible to use fewer cards though, so check
         for j in range(len(matches)):
-            if sum(int(digit) for digit in str(possibleMoves[j,2])[1:]) < sum(int(digit) for digit in str(bestMove[2])[1:]):
-                bestMove = possibleMoves[j,:]
+            if sum(int(digit) for digit in str(possibleMoves[matches[j],2])[1:]) < sum(int(digit) for digit in str(bestMove[2])[1:]):
+                bestMove = possibleMoves[matches[j],:]
         Move = bestMove
         
         ##Check if any cards were used and discard them
