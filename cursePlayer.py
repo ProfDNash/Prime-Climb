@@ -17,12 +17,15 @@ def cursePlayer(card, playerNum, PlayerList, DiscardPile):
     if card !=12 and card != 13:
         print('Error.  You cannot curse with card ', card)  ##for debugging
     else:
-        if len(PlayerList)>1:  ##only curse other players if other players exist
-            ##choose which player to curse (not self, and cannot already be cursed)
+        num_players = len(PlayerList)
+        all_cursed = [PlayerList[x].cursed for x in range(num_players)
+                      if x!=playerNum]
+        if False in all_cursed:  ##only curse other players if any aren't cursed
             pToCurse = playerNum
             while pToCurse == playerNum or PlayerList[pToCurse].cursed == True:
                 pToCurse = np.random.randint(0,len(PlayerList))
             PlayerList[pToCurse].cursed = True ##apply the curse
-        PlayerList[playerNum].cards.remove(card) ##remove the card from the player's hand
-        DiscardPile.append(card)  ##add the card to the discard pile
+            ##only remove the card if it can actually be played
+            PlayerList[playerNum].cards.remove(card) ##remove the card
+            DiscardPile.append(card)  ##add the card to the discard pile
     return PlayerList, DiscardPile
