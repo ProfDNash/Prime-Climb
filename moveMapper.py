@@ -77,7 +77,7 @@ def moveMapper(roll, pos, availCards, curse, Spots):
                     impossible=True
                     break
             if 101 in intermediatePos2[:,0]: ##you can win on a partial turn
-                intermediatePos2 = np.array([101,101,100000000000])
+                intermediatePos2 = intermediatePos2[ np.where(intermediatePos2[:,0]==101) ]
                 partialFlag = 1
                 break
         if impossible == False:
