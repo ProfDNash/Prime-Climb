@@ -50,8 +50,9 @@ def takeTurn(playerNum, PlayerList, Primes, Deck, DiscardPile, Spots, printData)
         print("Player ", playerNum, " wins!!!!")
         return -1*(playerNum+1), PlayerList, Deck, DiscardPile
     ##if 101 is an option for pawn2, don't consider other options
-    elif 101 in possibleMoves: 
-        TryToWin = np.where(possibleMoves[:,1]==101)[0] ##find indices of moves with 101 as one of the positions
+    elif 101 in possibleMoves:
+        ##find indices of moves with 101 as one of the positions
+        TryToWin = np.where(possibleMoves[:,1]==101)[0] 
         possibleMoves = possibleMoves[TryToWin]
         ##choose a random move
         Move = possibleMoves[np.random.randint(0,possibleMoves.shape[0])]
@@ -93,7 +94,8 @@ def takeTurn(playerNum, PlayerList, Primes, Deck, DiscardPile, Spots, printData)
         if printData == True:
             print('Player {} is no longer cursed'.format(playerNum))
     
-    ##if the player did not use the send home cards to augment their own move, they can choose to send someone else back
+    ##if the player did not use the send home cards to augment their own move, 
+    ##they can choose to send someone else back as part of their turn
     if 10 in PlayerList[playerNum].cards:
         if np.random.randint(0,2)==1:
             sendPlayerHome(10,playerNum,PlayerList,DiscardPile)
@@ -105,6 +107,8 @@ def takeTurn(playerNum, PlayerList, Primes, Deck, DiscardPile, Spots, printData)
     rollAgain, PlayerList, Deck, DiscardPile = drawACard(playerNum, pos, Move[0:2],PlayerList,Primes,Deck,DiscardPile)
     
     if rollAgain == True:  ##take another turn!
+        if printData == True:
+            print('Player {} gets to roll again!'.format(playerNum))
         return playerNum, PlayerList, Deck, DiscardPile
     else:  ##move to next player
         return (playerNum+1)%len(PlayerList), PlayerList, Deck, DiscardPile
