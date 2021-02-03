@@ -12,7 +12,7 @@ output: dA_prev -- gradient of the cost with respect to activation of previous l
 @author: David A. Nash
 """
 import numpy as np
-from NNutils import sigmoid, relu, softmax
+from NNutils import sigmoid
 
 def backStep(dA, cache, activation):
     

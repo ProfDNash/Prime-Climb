@@ -17,7 +17,6 @@ Note: (1) In Prime Climb, rolling doubles gives you 4 copies of the value (not 2
 """
 import numpy as np
 from itertools import permutations
-from BasicGameData import Player
 from applyCard import applyCard
 from applyDie import applyDie
 from cleanPositions import cleanPositions
@@ -69,7 +68,7 @@ def moveMapper(roll, pos, availCards, curse, Spots):
             #print(intermediatePos2.shape)
             if item[0] == 'c':    ##if the first character is c, apply the given card
                 ##ALSO Keep track of positions without using the card!
-                intermediatePos2 = np.append(intermediatePos2, applyCard(intermediatePos2, int(item[1:]), Spots), axis=0)
+                intermediatePos2 = np.append(intermediatePos2, applyCard(intermediatePos2, int(item[1:]), curse, Spots), axis=0)
             else:
                 intermediatePos2 = applyDie(intermediatePos2, int(item), curse, Spots)
                 ##it is possible (although unlikely) to have no allowable moves
@@ -78,7 +77,7 @@ def moveMapper(roll, pos, availCards, curse, Spots):
                     impossible=True
                     break
             if 101 in intermediatePos2[:,0]: ##you can win on a partial turn
-                intermediatePos2 = np.array([101,101,100000000000])
+                intermediatePos2 = intermediatePos2[ np.where(intermediatePos2[:,0]==101) ]
                 partialFlag = 1
                 break
         if impossible == False:

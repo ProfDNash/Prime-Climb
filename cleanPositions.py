@@ -9,8 +9,6 @@ and also deletes any duplicates
 @author: David A. Nash
 """
 import numpy as np
-from itertools import permutations
-from BasicGameData import Player
 
 def cleanPositions(iP1, Spots=np.arange(102)):
     iP1.sort(axis=1)  ##make sure positions are always listed in increasing order
