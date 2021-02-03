@@ -90,23 +90,24 @@ def moveMapper(roll, curr_pos, availCards, curse, Spots):
         if partialFlag == 1:
             break
     num = finalPos.shape[0]  ##count number of possible positions (triples)
-    #finalPos = finalPos.reshape((num,3))  ##reshape array to (num,3)
     
-    #sort, delete repeats and unallowable positions
-    finalPos = cleanPositions(finalPos, Spots)
+    ##it is possible to have no options (say b/c of curses), if so, stay put
+    if num==0:
+        finalPos = iP1.copy() ##stay put
+    else:
+        #sort, delete repeats and unallowable positions
+        finalPos = cleanPositions(finalPos, Spots)
     
-    ##take care of *self* bumping (if pos[0]==pos[1] then one pawn goes back to start)
-    delRow = np.array([])  ##initialize list of rows to delete
-    for idx, pos in enumerate(finalPos):
-        if pos[0] == pos[1] and pos[0] != 101:
-            if pos[1] != 0 and [0, pos[1], pos[2]] in finalPos.tolist():
-                delRow = np.append(delRow, idx)
-            else:
-                pos[0]=0
-    ##RE-SORT AND REMOVE DUPLICATES##
-    finalPos = np.delete(finalPos, delRow.astype('i8'), axis=0)
-    ##it is possible to have no options, if so, stay put
-    if finalPos.shape[0]==0:
-        finalPos = iP1.copy()
+        ##take care of *self* bumping (if pos[0]==pos[1] then one pawn goes back to start)
+        delRow = np.array([])  ##initialize list of rows to delete
+        for idx, pos in enumerate(finalPos):
+            if pos[0] == pos[1] and pos[0] != 101:
+                if pos[1] != 0 and [0, pos[1], pos[2]] in finalPos.tolist():
+                    delRow = np.append(delRow, idx)
+                else:
+                    pos[0]=0
+        ##REMOVE DUPLICATES##
+        finalPos = np.delete(finalPos, delRow.astype('i8'), axis=0)
+
     finalPos.view('i8,i8,i8').sort(order=['f0','f1'], axis=0)
     return finalPos.astype('i8')
