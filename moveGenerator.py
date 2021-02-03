@@ -13,15 +13,12 @@ Note: (1) In Prime Climb, rolling doubles gives you 4 copies of the value (not 2
 @author: David A. Nash
 """
 import numpy as np
-#from itertools import permutations
-from BasicGameData import Player
-#from applyCard import applyCard
 from applyDie import applyDie
 from cleanPositions import cleanPositions
 
 
 def simpleMove(roll, pos):
-    partialFlag = 0  ##a flag keeping track of whether it is possible to win on a partial turn
+    #partialFlag = 0  ##a flag keeping track of whether it is possible to win on a partial turn
     ##initialize the array of positions with the current position
     iP1 = np.array(pos).reshape((1,2))
     

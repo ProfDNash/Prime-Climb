@@ -11,7 +11,6 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 
 @author: David A. Nash
 """
-import numpy as np
 from forwardStep import forwardStep
 
 def forwardProp(Xt, parameters):  

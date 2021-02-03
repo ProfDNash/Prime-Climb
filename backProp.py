@@ -8,7 +8,6 @@ output: grads -- a dictionary containing gradients of prediction for dA, dW, db,
 
 @author: David A. Nash
 """
-import numpy as np
 from backStep import backStep
 
 def backProp(AL, ALt, caches):
@@ -18,8 +17,8 @@ def backProp(AL, ALt, caches):
     current_cache = caches[L-1]  ##cache for final layer
     A_prev, W, b, Z = current_cache
     
-    m = AL.shape[1]
-    dim = AL.shape[0] ##size of final output layer
+    #m = AL.shape[1]
+    #dim = AL.shape[0] ##size of final output layer
     ##note, we're not taking derivative of cost... just of the prediction function, 
     ##so dAL=1, and we'll spit back dZ
     #dAL = np.ones(AL.shape)  ##initialize array to collect derivatives

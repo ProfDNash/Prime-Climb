@@ -20,8 +20,6 @@ Note: (1) Players only draw a (maximum of 1) card if one of their pawns ends on 
 @author: David A. Nash
 """
 import numpy as np
-from itertools import permutations
-from BasicGameData import Player
 from bumpChecker import bumpChecker
 
 
