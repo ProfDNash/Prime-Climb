@@ -11,22 +11,26 @@ and also deletes any duplicates
 import numpy as np
 
 def cleanPositions(iP1, Spots=np.arange(102)):
-    iP1.sort(axis=1)  ##make sure positions are always listed in increasing order
-    if iP1.shape[1]>2:  ##when considering cards, there is a third value to keep track of
-        iP1.view('float,float,float').sort(order=['f0','f1'], axis=0)  ##sort them into increasing order (lex)
+    ##make sure each position is listed in increasing order
+    iP1.sort(axis=1)  
+    
+    ##then sort different positions into increasing order (lex)
+    if iP1.shape[1]>2:  ##when considering cards, we have the encoding value too
+        iP1.view('float,float,float').sort(order=['f0','f1'], axis=0)  
     else:
-        iP1.view('float,float').sort(order=['f0'], axis=0) ##sort them into increasing order (lex)
+        iP1.view('float,float').sort(order=['f0'], axis=0)
+        
     deleteRows=np.array([]) ##keep track of things to delete
-    compareRow=0 ##current row we're comparing to (for repeats)
-    for i in range(iP1.shape[0]):
-        if (iP1[i,0] not in Spots) or (iP1[i,1] not in Spots):
+    compareRow=None ##current row we're comparing to (for repeats)
+    for idx, pos in enumerate(iP1):
+        if (pos[0] not in Spots) or (pos[1] not in Spots):
             ##mark row for deletion if off the board
-            deleteRows = np.append(deleteRows, i) 
-        elif (compareRow!=i) and (np.array_equal(iP1[i,:], iP1[compareRow,:])):
+            deleteRows = np.append(deleteRows, idx) 
+        elif np.array_equal(pos, compareRow):
             ##mark duplicates for deletion
-            deleteRows = np.append(deleteRows, i) 
+            deleteRows = np.append(deleteRows, idx) 
         else:
-            compareRow=i  ##reassign currentRow if we run into a different allowable position
+            compareRow=pos  ##reassign currentRow if we run into a new allowable position
     deleteRows = deleteRows.astype(int)
     iP1 = np.delete(iP1, deleteRows, axis=0)
     return iP1
