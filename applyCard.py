@@ -36,8 +36,10 @@ def applyCard(iP1, card, curse, Spots):
                     iP2 = np.append(iP2, iP1[i,:]+(card,0,10**(11-card))) ##so card corresponds to digit number card
                 ##again, do not apply a card to a pawn already at 101
                 if iP1[i,1]!=101:
-                    iP2 = np.append(iP2, iP1[i,:]+(0,card,10**(11-card)))
                     iP2 = np.append(iP2, iP1[i,:]-(0,card,-10**(11-card)))
+                    ## Can only subtract or divide when cursed
+                    if not curse:
+                        iP2 = np.append(iP2, iP1[i,:]+(0,card,10**(11-card)))
         elif 9<card<12:  ##these cards bump a pawn back to start (the player could do this to themself)
             for i in range(iP1.shape[0]):
                 iP2 = np.append(iP2,np.array([0,iP1[i,1],100000000000+10**(11-card)]))  ##move lower pawn
