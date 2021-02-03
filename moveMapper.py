@@ -68,7 +68,7 @@ def moveMapper(roll, pos, availCards, curse, Spots):
             #print(intermediatePos2.shape)
             if item[0] == 'c':    ##if the first character is c, apply the given card
                 ##ALSO Keep track of positions without using the card!
-                intermediatePos2 = np.append(intermediatePos2, applyCard(intermediatePos2, int(item[1:]), Spots), axis=0)
+                intermediatePos2 = np.append(intermediatePos2, applyCard(intermediatePos2, int(item[1:]), curse, Spots), axis=0)
             else:
                 intermediatePos2 = applyDie(intermediatePos2, int(item), curse, Spots)
                 ##it is possible (although unlikely) to have no allowable moves
