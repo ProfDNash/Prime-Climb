@@ -12,7 +12,7 @@ import numpy as np
 
 def cleanPositions(iP1, Spots=np.arange(102)):
     ##make sure each position is listed in increasing order
-    iP1.sort(axis=1)  
+    iP1.sort(axis=1)
     
     ##then sort different positions into increasing order (lex)
     if iP1.shape[1]>2:  ##when considering cards, we have the encoding value too
