@@ -20,15 +20,16 @@ def sendPlayerHome(card, playerNum, PlayerList, DiscardPile):
     else:
         ##check whether any other players are away from the start (position 0)
         offStart = [] ##initialize a list of tuples of the form (player_index,pawn_index)
-        for j in range(len(PlayerList)):
-            if j== playerNum:
+        for idx, player in enumerate(PlayerList):
+            if idx == playerNum:
+                #sending self home is take care of during moveMapper
                 continue
             else:
                 ##cannot bump pawns on 0 or 101
-                if PlayerList[j].position[1] !=0 and PlayerList[j].position[1]!=101:
-                    offStart.append([j,1])
-                    if PlayerList[j].position[0] !=0:  ##if pos[0]==101, then the game should be over
-                        offStart.append([j,0])
+                if player.position[1] !=0 and player.position[1]!=101:
+                    offStart.append([idx,1])
+                    if player.position[0] !=0:  ##if pos[0]==101, then the game should be over
+                        offStart.append([idx,0])
         if len(offStart)>0:  ##then there are pawns to bump which aren't at the start
             ##choose a random player and pawn from the list of options
             playerChosen, pawnChosen = offStart[np.random.randint(0,len(offStart))]
