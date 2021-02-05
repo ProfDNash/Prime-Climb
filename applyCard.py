@@ -20,8 +20,8 @@ from cleanPositions import cleanPositions
 def applyCard(iP1, card, curse, Spots):
     iP2 = np.array([])  ##initialize list of generated positions
     ##cannot apply a card if both pawns are already at the end
-    if iP1[0,0]==101:
-        print("No need to apply cards... you already won!")  ##for debugging
+    if 101 in iP1[:,0]:
+        #print("No need to apply cards... you already won!")  ##for debugging
         iP2=iP1
     else:
         if 0<card<10:

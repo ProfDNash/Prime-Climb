@@ -27,7 +27,7 @@ def applyDie(iP1,die,curse=False,Spots=np.arange(102)):
     mult2 = (1,die,1)
     
     iP2 = np.array([]) ##initialize new array of possible positions
-    if iP1[0,0]==101:  ##do not allow movement away from position 101
+    if 101 in iP1[:,0]:  ##do not allow movement away from position 101
         #print("You already won... No need to keep rolling.")  ##for debugging only
         iP2=iP1
     else:
