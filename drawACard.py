@@ -139,5 +139,6 @@ def drawACard(playerNum,oldPos,newPos,PlayerList,Primes,Deck,DiscardPile):
             newPos[0] = 0
             PlayerList[playerNum].position = newPos
         else:
+            PlayerList[playerNum].position.sort
             bumpChecker(playerNum, PlayerList)
     return rollAgain, PlayerList, Deck, DiscardPile
