@@ -43,6 +43,7 @@ def takeTurn(playerNum, PlayerList, Primes, Deck, DiscardPile, Spots, printData)
     if printData == True:
         print('Player {} rolled:'.format(playerNum), roll)
     possibleMoves = moveMapper(roll,pos,PlayerList[playerNum].cards,PlayerList[playerNum].cursed, Spots)
+    possibleMoves = possibleMoves.reshape(-1,3)
 
     ##choose to win if you can
     if 101 in possibleMoves[:,0]:

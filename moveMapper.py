@@ -93,7 +93,7 @@ def moveMapper(roll, curr_pos, availCards, curse, Spots):
     
     ##it is possible to have no options (say b/c of curses), if so, stay put
     if num==0:
-        finalPos = iP1.copy() ##stay put
+        finalPos = iP1.copy().reshape(-1,3) ##stay put
     else:
         #sort, delete repeats and unallowable positions
         finalPos = cleanPositions(finalPos, Spots)
