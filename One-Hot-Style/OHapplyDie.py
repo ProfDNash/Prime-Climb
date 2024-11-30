@@ -12,36 +12,38 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 
 @author: David A. Nash
 """
+
 import numpy as np
 from BasicGameData import Player
 from cleanPositions import cleanPositions
 
-def OHapplyDie(iP1,die,curse=False,Spots=np.arange(102)):
+
+def OHapplyDie(iP1, die, curse=False, Spots=np.arange(102)):
     ##first, convert position to a single integer
-    pos = np.where(iP1==1)[1][0]
-    if die==0: ##A roll of zero corresponds to the value 10
-        die=10
-    
-    iP2 = np.array([]).reshape((0,102)) ##initialize new array of possible positions
-    Zer = np.zeros((1,102))  ##initialize array of zeros
-    if pos==101:  ##do not allow movement away from position 101
-        iP2=iP1
+    pos = np.where(iP1 == 1)[1][0]
+    if die == 0:  ##A roll of zero corresponds to the value 10
+        die = 10
+
+    iP2 = np.array([]).reshape((0, 102))  ##initialize new array of possible positions
+    Zer = np.zeros((1, 102))  ##initialize array of zeros
+    if pos == 101:  ##do not allow movement away from position 101
+        iP2 = iP1
     else:
-        if pos+die in Spots:
-            Zer[0,pos+die] = 1
-            iP2 = np.append(iP2,Zer,axis=0)
-            Zer[0,pos+die] = 0
-        if pos-die in Spots:
-            Zer[0,pos-die] = 1
-            iP2 = np.append(iP2,Zer,axis=0)
-            Zer[0,pos-die] = 0
-        if pos*die in Spots:
-            Zer[0,pos*die] = 1
-            iP2 = np.append(iP2,Zer,axis=0)
-            Zer[0,pos*die] = 0
-        if pos/die in Spots:
-            Zer[0,int(pos/die)] = 1
-            iP2 = np.append(iP2,Zer,axis=0)
-            Zer[0,int(pos/die)] = 0
+        if pos + die in Spots:
+            Zer[0, pos + die] = 1
+            iP2 = np.append(iP2, Zer, axis=0)
+            Zer[0, pos + die] = 0
+        if pos - die in Spots:
+            Zer[0, pos - die] = 1
+            iP2 = np.append(iP2, Zer, axis=0)
+            Zer[0, pos - die] = 0
+        if pos * die in Spots:
+            Zer[0, pos * die] = 1
+            iP2 = np.append(iP2, Zer, axis=0)
+            Zer[0, pos * die] = 0
+        if pos / die in Spots:
+            Zer[0, int(pos / die)] = 1
+            iP2 = np.append(iP2, Zer, axis=0)
+            Zer[0, int(pos / die)] = 0
 
     return iP2

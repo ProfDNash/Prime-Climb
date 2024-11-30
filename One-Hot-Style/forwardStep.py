@@ -11,20 +11,22 @@ output: A -- activations for the current layer
 
 @author: David A. Nash
 """
+
 import numpy as np
 from NNutils import sigmoid, relu, softmax, leaky
 
+
 def forwardStep(A_prev, W, b, activation):
-    Z = np.dot(W,A_prev)+b
+    Z = np.dot(W, A_prev) + b
     cache = (A_prev, W, b, Z)
-    
-    if activation == 'sigmoid':
+
+    if activation == "sigmoid":
         A = sigmoid(Z)
-    elif activation == 'relu':
+    elif activation == "relu":
         A = relu(Z)
-    elif activation == 'softmax':
+    elif activation == "softmax":
         A = softmax(Z)
-    elif activation == 'leaky':  ##new option for exploring 
+    elif activation == "leaky":  ##new option for exploring
         A = leaky(Z)
-    
+
     return A, cache

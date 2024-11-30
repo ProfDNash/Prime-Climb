@@ -15,25 +15,28 @@ output: turns -- an list containing the number of turns for each game
 
 @author: David A. Nash
 """
+
 import pickle
 from onePlayer import onePlayerGame
+
 
 def OPtrain(parameters, lambd=0, alpha=0.01, numGames=10, eps=0.99, learn=True):
     ##initialize counters
     turns = list()
-    params=parameters.copy()
+    params = parameters.copy()
     for g in range(numGames):
-        if g%10==0: print('Game:',g)
+        if g % 10 == 0:
+            print("Game:", g)
         Xlist, Ylist, turn, params = onePlayerGame(params, lambd, alpha, eps, learn)
         turns.append(turn)
-        if learn==True:
+        if learn == True:
             eps *= 0.999
-            if g%100==0:
-                f = open('params3.pkl', 'wb')
-                pickle.dump(params,f)
+            if g % 100 == 0:
+                f = open("params3.pkl", "wb")
+                pickle.dump(params, f)
                 f.close()
-                g = open('turns3.pkl', 'wb')
-                pickle.dump(turns,g)
+                g = open("turns3.pkl", "wb")
+                pickle.dump(turns, g)
                 g.close()
-        
+
     return turns, params

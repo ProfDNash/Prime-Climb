@@ -15,26 +15,29 @@ output: turns -- an list containing the number of turns for each game
 
 @author: David A. Nash
 """
+
 import numpy as np
 import pickle
 from OHonePlayer import OHonePlayerGame
 
+
 def OHtrain(parameters, lambd=0.1, alpha=0.01, numGames=1000, eps=0.9999, learn=True):
     ##initialize counters
     turns = list()
-    params=parameters.copy()
+    params = parameters.copy()
     for g in range(numGames):
-        if g%50==0: print('Game:',g)
+        if g % 50 == 0:
+            print("Game:", g)
         Xlist, Ylist, turn, params = OHonePlayerGame(params, lambd, alpha, eps, learn)
         turns.append(turn)
-        if learn==True:
+        if learn == True:
             eps *= 0.9999
-            if g%100==0:
-                f = open('OHparams.pkl', 'wb')
-                pickle.dump(params,f)
+            if g % 100 == 0:
+                f = open("OHparams.pkl", "wb")
+                pickle.dump(params, f)
                 f.close()
-                g = open('OHturns.pkl', 'wb')
-                pickle.dump(turns,g)
+                g = open("OHturns.pkl", "wb")
+                pickle.dump(turns, g)
                 g.close()
-        
+
     return turns, params

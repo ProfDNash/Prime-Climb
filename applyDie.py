@@ -13,44 +13,46 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 
 @author: David A. Nash
 """
+
 import numpy as np
 from cleanPositions import cleanPositions
 
-def applyDie(iP1,die,curse=False,Spots=np.arange(102)):
-    if die==0: ##A roll of zero corresponds to the value 10
-        die=10
+
+def applyDie(iP1, die, curse=False, Spots=np.arange(102)):
+    if die == 0:  ##A roll of zero corresponds to the value 10
+        die = 10
     ##add a way to deal with the possibility of cards and no cards simultaneously
-    c = iP1.shape[1] ##2 if no cards, 3 if allowing cards
-    adder1 = (die,0,0)
-    adder2 = (0,die,0)
-    mult1 = (die,1,1)
-    mult2 = (1,die,1)
-    
-    iP2 = np.array([]) ##initialize new array of possible positions
-    if iP1[0,0]==101:  ##do not allow movement away from position 101
-        #print("You already won... No need to keep rolling.")  ##for debugging only
-        iP2=iP1
+    c = iP1.shape[1]  ##2 if no cards, 3 if allowing cards
+    adder1 = (die, 0, 0)
+    adder2 = (0, die, 0)
+    mult1 = (die, 1, 1)
+    mult2 = (1, die, 1)
+
+    iP2 = np.array([])  ##initialize new array of possible positions
+    if iP1[0, 0] == 101:  ##do not allow movement away from position 101
+        # print("You already won... No need to keep rolling.")  ##for debugging only
+        iP2 = iP1
     else:
         ##when cursed, you can only subtract or divide
-        iP2 = np.append(iP2, iP1-adder1[:c])
-        iP2 = np.append(iP2, iP1/mult1[:c])
+        iP2 = np.append(iP2, iP1 - adder1[:c])
+        iP2 = np.append(iP2, iP1 / mult1[:c])
         ##if not cursed, you can also add or multiply
-        if curse==False:  
-            iP2 = np.append(iP2, iP1+adder1[:c])
-            iP2 = np.append(iP2, iP1*mult1[:c])
+        if curse == False:
+            iP2 = np.append(iP2, iP1 + adder1[:c])
+            iP2 = np.append(iP2, iP1 * mult1[:c])
         ##do not allow movement away from position 101 in the second position either
-        if iP1[0,1]!=101: 
+        if iP1[0, 1] != 101:
             ##when cursed, you can only subtract or divide
-            iP2 = np.append(iP2, iP1-adder2[:c])
-            iP2 = np.append(iP2, iP1/mult2[:c])
+            iP2 = np.append(iP2, iP1 - adder2[:c])
+            iP2 = np.append(iP2, iP1 / mult2[:c])
             ##if not cursed, you can also add or multiply
-            if curse==False:  
-                iP2 = np.append(iP2, iP1+adder2[:c])
-                iP2 = np.append(iP2, iP1*mult2[:c])
+            if curse == False:
+                iP2 = np.append(iP2, iP1 + adder2[:c])
+                iP2 = np.append(iP2, iP1 * mult2[:c])
         ##count the number of new positions (represented as c-tuples)
-        num = np.int(iP2.shape[0]/c)  
+        num = np.int(iP2.shape[0] / c)
         ##reshape to a list of c-tuples
-        iP2 = iP2.reshape((num,c))
-        #sort, eliminate duplicates and unallowable positions
+        iP2 = iP2.reshape((num, c))
+        # sort, eliminate duplicates and unallowable positions
         iP2 = cleanPositions(iP2)
     return iP2

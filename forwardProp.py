@@ -11,21 +11,27 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 
 @author: David A. Nash
 """
+
 from forwardStep import forwardStep
 
-def forwardProp(Xt, parameters):  
+
+def forwardProp(Xt, parameters):
     ##apply linear + ReLU at each layer until applying linear + softmax to the final layer##
-    L = len(parameters)//2  ##counts the number of layers
+    L = len(parameters) // 2  ##counts the number of layers
     caches = []  ##initialize caches list to save values as we proceed
     A = Xt
-    
-    for l in range(1,L):
+
+    for l in range(1, L):
         A_prev = A
-        A, cache = forwardStep(A_prev,parameters['W'+str(l)],parameters['b'+str(l)],'leaky')
+        A, cache = forwardStep(
+            A_prev, parameters["W" + str(l)], parameters["b" + str(l)], "leaky"
+        )
         caches.append(cache)
-    
+
     ##For layer L, compute sigmoid
-    AL, cache = forwardStep(A, parameters['W'+str(L)], parameters['b'+str(L)],'leaky')
+    AL, cache = forwardStep(
+        A, parameters["W" + str(L)], parameters["b" + str(L)], "leaky"
+    )
     caches.append(cache)
 
     return AL, caches

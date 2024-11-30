@@ -15,31 +15,33 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 
 @author: David A. Nash
 """
+
 import numpy as np
 from OHmoveGen import OHsimpleMove
 from forwardProp import forwardProp
 
+
 ##Choose the next position by selecting the maximum potential reward among all possible moves
-def OHchooseMove(Xt,roll,parameters, Spots=np.arange(0,102), Rand=False):
+def OHchooseMove(Xt, roll, parameters, Spots=np.arange(0, 102), Rand=False):
     ##First get an array of the possible moves
-    possMoves = OHsimpleMove(roll,Xt)
-    
+    possMoves = OHsimpleMove(roll, Xt)
+
     ##choose the move that has the highest prediction value for the current player
     if Rand == False:
-        best = 0 ##initialize best win probability
+        best = 0  ##initialize best win probability
         bestidx = 0  ##initialize index of best move
         for i in range(possMoves.shape[0]):
-            Xnext=possMoves[i,:].reshape((1,102))
+            Xnext = possMoves[i, :].reshape((1, 102))
             ##use forwardProp predictions to rate the options
-            AL, caches = forwardProp(Xnext.T,parameters)
+            AL, caches = forwardProp(Xnext.T, parameters)
             score = AL[0][0]
             if score > best:
                 best = score
                 bestidx = i
-    else: ##choose a random move -- for exploration during training
-        bestidx = np.random.randint(0,possMoves.shape[0])
-    
+    else:  ##choose a random move -- for exploration during training
+        bestidx = np.random.randint(0, possMoves.shape[0])
+
     ##return the chosen move with player turn changed
-    Xnext = possMoves[bestidx,:].reshape((1,102))
-    
+    Xnext = possMoves[bestidx, :].reshape((1, 102))
+
     return Xnext

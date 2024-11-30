@@ -15,19 +15,22 @@ output: winners -- an array counting of the number of wins for each player
 
 @author: David A. Nash
 """
+
 import numpy as np
 from learnGame import learnGame
 
+
 def train(parameters, lambd=0, alpha=0.01, numGames=10, eps=0.99):
     ##initialize counters
-    winners = np.array([0,0])
+    winners = np.array([0, 0])
     turns = list()
-    params=parameters.copy()
+    params = parameters.copy()
     for g in range(numGames):
-        if g%2==0: print('Game:',g)
+        if g % 2 == 0:
+            print("Game:", g)
         Xlist, Ylist, turn, params, winner = learnGame(params, lambd, alpha, eps)
         turns.append(turn)
         winners[winner] += 1
         eps *= 0.99
-        
+
     return winners, turns, params
