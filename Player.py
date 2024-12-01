@@ -43,20 +43,11 @@ class Player:
         # Keep general position for now -- remove later
         self.position = (self.low_position, self.high_position)
 
+    def curse(self):
+        if self.cursed:
+            raise Exception("Cannot curse a player that is already cursed")
 
-# TODO: Create a Game class to handle this
-def initGame(numPlayers: int = 1):
-    """
-    A helper function to initialize a list of players and a deck of cards for a game.
-    """
-    if numPlayers < 1 or numPlayers > 4:
-        raise ValueError("Error: Can only be played with 1 to 4 players")
-
-    PlayerList = [Player() for _ in range(numPlayers)]
-    ##Shuffle the deck of cards
-    Deck = np.arange(1, 25)
-    Deck = np.random.permutation(Deck)
-    return PlayerList, Deck
+        self.cursed = True
 
 
 def rollGenerator(n):
