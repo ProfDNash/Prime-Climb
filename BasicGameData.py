@@ -28,6 +28,21 @@ class Player:
         self.cards = cards if cards is not None else []
         self.cursed = cursed
 
+    def _validate_positions(self) -> None:
+        """
+        Helper method to ensure low_position < high_position
+        """
+        if (
+            self.low_position < self.high_position
+            or self.low_position == 0
+            or self.high_position == 101
+        ):
+            return None
+
+        self.low_position, self.high_position = self.high_position, self.low_position
+        # Keep general position for now -- remove later
+        self.position = (self.low_position, self.high_position)
+
 
 def initGame(numPlayers):
     if numPlayers < 1 or numPlayers > 4:
