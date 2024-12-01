@@ -21,7 +21,6 @@ Note: (1) Players only draw a (maximum of 1) card if one of their pawns ends on 
 """
 
 import numpy as np
-from bumpChecker import bumpChecker
 
 
 def drawACard(playerNum, oldPos, newPos, PlayerList, Primes, Deck, DiscardPile):
@@ -161,6 +160,6 @@ def drawACard(playerNum, oldPos, newPos, PlayerList, Primes, Deck, DiscardPile):
         if newPos[0] == newPos[1]:  ##take care of self-bumping first
             newPos[0] = 0
             PlayerList[playerNum].position = newPos
-        else:
-            bumpChecker(playerNum, PlayerList)
+        # Other collisions will be resolved within the game
+
     return rollAgain, PlayerList, Deck, DiscardPile

@@ -15,7 +15,6 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 import numpy as np
 from Player import Player
 from src.utilities.constants import CARD_PRIMES
-from bumpChecker import bumpChecker
 from cursePlayer import find_curse_target
 from drawACard import drawACard
 from moveMapper import moveMapper
@@ -37,6 +36,34 @@ class Game:
 
     def _next_player(self):
         self.current_player = (self.current_player + 1) % self.number_of_players
+
+    def _resolve_collisions(self) -> None:
+        """
+        If the current player ends their turn on the same location as another player
+        they bump that player's pawns back to the start
+        """
+        potential = set(self.players[self.current_player].position).difference({0, 101})
+
+        # If current player is only at 0 and/or 101, there will be nothing to bump
+        if not potential:
+            return None
+
+        for idx, player in self.players.items():
+            # self-bumping is taken care of in the generation of new positions
+            if idx == self.current_player or not set(player.position).intersection(
+                potential
+            ):
+                continue
+
+            new_position = [
+                spot if spot not in potential else 0 for spot in player.position
+            ]
+            new_position.sort()
+            self.players[idx].position = tuple(new_position)
+            if self.verbose:
+                print(f"Player {idx} was bumped!")
+
+        return None
 
     def _take_turn(self, PlayerList, Primes, Deck, DiscardPile, Spots):
         ##at the start of the turn, randomly decide whether to curse another player (if the card is available)
@@ -116,11 +143,12 @@ class Game:
             print(f"Player {self.current_player} moves to: {Move[0:2]}")
 
         ##Check for bumping, note: self bumping is already achieved in moveMapper
-        bumpChecker(self.current_player, PlayerList)
+        # bumpChecker(self.current_player, PlayerList)
+        self._resolve_collisions()
 
         ##undo any curses at the end of the turn
-        if PlayerList[self.current_player].cursed:
-            PlayerList[self.current_player].cursed = False
+        if self.players[self.current_player].cursed:
+            self.players[self.current_player].cursed = False
             if self.verbose:
                 print(f"Player {self.current_player} is no longer cursed")
 
@@ -137,6 +165,9 @@ class Game:
         rollAgain, PlayerList, Deck, DiscardPile = drawACard(
             self.current_player, pos, Move[0:2], PlayerList, Primes, Deck, DiscardPile
         )
+
+        # Drawing an action card could cause another collision. So re-resolve
+        self._resolve_collisions()
 
         if rollAgain:  ##take another turn!
             if self.verbose:
