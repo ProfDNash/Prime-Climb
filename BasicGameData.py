@@ -44,15 +44,18 @@ class Player:
         self.position = (self.low_position, self.high_position)
 
 
-def initGame(numPlayers):
+# TODO: Create a Game class to handle this
+def initGame(numPlayers: int = 1):
+    """
+    A helper function to initialize a list of players and a deck of cards for a game.
+    """
     if numPlayers < 1 or numPlayers > 4:
-        print("Error, can only be played with 1 to 4 players")
-    else:
-        PlayerList = [Player() for _ in range(numPlayers)]
-        PlayerList = PlayerList[:numPlayers]
-        ##Shuffle the deck of cards
-        Deck = np.arange(1, 25)
-        Deck = np.random.permutation(Deck)
+        raise ValueError("Error: Can only be played with 1 to 4 players")
+
+    PlayerList = [Player() for _ in range(numPlayers)]
+    ##Shuffle the deck of cards
+    Deck = np.arange(1, 25)
+    Deck = np.random.permutation(Deck)
     return PlayerList, Deck
 
 
