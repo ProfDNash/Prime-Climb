@@ -50,7 +50,7 @@ def applyDie(iP1, die, curse=False, Spots=np.arange(102)):
                 iP2 = np.append(iP2, iP1 + adder2[:c])
                 iP2 = np.append(iP2, iP1 * mult2[:c])
         ##count the number of new positions (represented as c-tuples)
-        num = np.int(iP2.shape[0] / c)
+        num = iP2.shape[0] // c
         ##reshape to a list of c-tuples
         iP2 = iP2.reshape((num, c))
         # sort, eliminate duplicates and unallowable positions

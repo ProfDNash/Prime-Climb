@@ -54,7 +54,7 @@ def applyCard(iP1, card, curse, Spots):
                     iP2 = np.append(
                         iP2, np.array([0, iP1[i, 0], 100000000000 + 10 ** (11 - card)])
                     )  ##move higher pawn
-        num = np.int(iP2.shape[0] / 3)  ##count number of positions in the list
+        num = iP2.shape[0] // 3  ##count number of positions in the list
         iP2 = iP2.reshape((num, 3))  ##reshape to a list of triples
         iP2 = cleanPositions(
             iP2, Spots
