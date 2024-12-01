@@ -18,7 +18,7 @@ from src.utilities.constants import CARD_PRIMES
 from cursePlayer import find_curse_target
 from drawACard import drawACard
 from moveMapper import moveMapper
-from sendPlayerHome import sendPlayerHome
+from sendPlayerHome import find_send_home_target
 
 
 class Game:
@@ -143,7 +143,6 @@ class Game:
             print(f"Player {self.current_player} moves to: {Move[0:2]}")
 
         ##Check for bumping, note: self bumping is already achieved in moveMapper
-        # bumpChecker(self.current_player, PlayerList)
         self._resolve_collisions()
 
         ##undo any curses at the end of the turn
@@ -152,14 +151,21 @@ class Game:
             if self.verbose:
                 print(f"Player {self.current_player} is no longer cursed")
 
-        ##if the player did not use the send home cards to augment their own move,
-        ##they can choose to send someone else back as part of their turn
-        if 10 in PlayerList[self.current_player].cards:
-            if np.random.randint(0, 2) == 1:
-                sendPlayerHome(10, self.current_player, PlayerList, DiscardPile)
-        if 11 in PlayerList[self.current_player].cards:
-            if np.random.randint(0, 2) == 1:
-                sendPlayerHome(11, self.current_player, PlayerList, DiscardPile)
+        # if the player did not use the send home cards to augment their own move,
+        # they can choose to send someone else back as part of their turn
+        existing_home_cards = set(self.players[self.current_player].cards).intersection(
+            {10, 11}
+        )
+        while existing_home_cards and np.random.choice([True, False]):
+            card = existing_home_cards.pop()
+            send_home_target, send_home_pawn = find_send_home_target(
+                current_player=self.current_player, players=self.players
+            )
+            # bump that pawn back to start and discard the card played
+            self.players[send_home_target].position[send_home_pawn] = 0
+            self.players[send_home_target].position.sort()
+            self.players[self.current_player].cards.remove(card)
+            self.discard_pile.append(card)
 
         ## after all actions, check to see if they get to draw a card
         rollAgain, PlayerList, Deck, DiscardPile = drawACard(
