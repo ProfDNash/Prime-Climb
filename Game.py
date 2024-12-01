@@ -13,11 +13,10 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 """
 
 import numpy as np
-from BasicGameData import Player
+from Player import Player
 from src.utilities.constants import CARD_PRIMES
-from takeTurn import takeTurn
 from bumpChecker import bumpChecker
-from cursePlayer import cursePlayer
+from cursePlayer import find_curse_target
 from drawACard import drawACard
 from moveMapper import moveMapper
 from sendPlayerHome import sendPlayerHome
@@ -41,17 +40,21 @@ class Game:
 
     def _take_turn(self, PlayerList, Primes, Deck, DiscardPile, Spots):
         ##at the start of the turn, randomly decide whether to curse another player (if the card is available)
-        curseFlag = 0
-        if 12 in PlayerList[self.current_player].cards:
-            curseFlag = np.random.randint(
-                0, 2
-            )  ##randomly choose whether to use the card or not
-            card = 12
-        elif 13 in PlayerList[self.current_player].cards:
-            curseFlag = np.random.randint(0, 2)
-            card = 13
-        if curseFlag == 1:
-            cursePlayer(card, self.current_player, PlayerList, DiscardPile)
+        existing_curse_cards = set(
+            self.players[self.current_player].cards
+        ).intersection({12, 13})
+        while existing_curse_cards and np.random.choice([True, False]):
+            card = existing_curse_cards.pop()
+            curse_target = find_curse_target(
+                current_player=self.current_player, players=self.players
+            )
+            if curse_target is None:
+                break
+
+            self.players[curse_target].curse()
+            # Remove the card that has been played
+            self.players[self.current_player].cards.remove(card)
+            self.discard_pile.append(card)
 
         ##Get the current player position, roll the dice, and generate the possible moves
         pos = PlayerList[self.current_player].position
@@ -116,7 +119,7 @@ class Game:
         bumpChecker(self.current_player, PlayerList)
 
         ##undo any curses at the end of the turn
-        if PlayerList[self.current_player].cursed == True:
+        if PlayerList[self.current_player].cursed:
             PlayerList[self.current_player].cursed = False
             if self.verbose:
                 print(f"Player {self.current_player} is no longer cursed")
