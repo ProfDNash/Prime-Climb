@@ -34,6 +34,7 @@ class Game:
         self.board_spots = np.arange(102)
         self.current_player = 0
         self.card_primes = CARD_PRIMES
+        self.game_over = False
 
     def _next_player(self):
         self.current_player = (self.current_player + 1) % self.number_of_players
@@ -69,7 +70,7 @@ class Game:
         if 101 in possibleMoves[:, 0]:
             Move = np.array([101, 101]).reshape((1, 2))
             print(f"Player {self.current_player} wins!!!!")
-            self.current_player = -1 * (self.current_player + 1)
+            self.game_over = True
             return PlayerList, Deck, DiscardPile
         ##if 101 is an option for pawn2, don't consider other options
         elif 101 in possibleMoves:
@@ -147,15 +148,8 @@ class Game:
         """
         Method which plays the game until someone wins
         """
-        while (
-            self.current_player > -1
-            and self.players[self.current_player].position[0] != 101
-        ):
-            (
-                intermediate_players,
-                self.deck,
-                self.discard_pile,
-            ) = self._take_turn(
+        while not self.game_over:
+            intermediate_players, self.deck, self.discard_pile = self._take_turn(
                 PlayerList=list(self.players.values()),
                 Primes=self.card_primes,
                 Deck=self.deck,
@@ -169,9 +163,8 @@ class Game:
             if self.number_of_turns > 1000:
                 print("Something is wrong")  ##for debugging
                 break
-        ##currPlayer==-1 corresponds to player 0 winning, etc.
-        winner = -self.current_player - 1
-        return self.number_of_turns, winner
+
+        return self.number_of_turns, self.current_player
 
 
 if __name__ == "__main__":
