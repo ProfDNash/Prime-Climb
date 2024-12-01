@@ -174,31 +174,6 @@ class Game:
         return self.number_of_turns, winner
 
 
-# def playGame(numPlayers, printData=False):
-#     ##initialize list of Primes, the Deck, the DiscardPile, and the PlayerList
-#     Spots = np.arange(102)
-#     Primes = CARD_PRIMES
-#     DiscardPile = []
-#     PlayerList, Deck = initGame(numPlayers)
-
-#     ##initialize the number of turns counter and the starting player
-#     nTurns = 0
-#     currPlayer = 0
-
-#     ##keep taking turns until someone wins (currPlayer<0)
-#     while currPlayer > -1 and PlayerList[currPlayer].position[0] != 101:
-#         currPlayer, PlayerList, Deck, DiscardPile = takeTurn(
-#             currPlayer, PlayerList, Primes, Deck, DiscardPile, Spots, printData
-#         )
-#         nTurns += 1
-#         if nTurns > 1000:
-#             print("Something is wrong")  ##for debugging
-#             break
-#     ##currPlayer==-1 corresponds to player 0 winning, etc.
-#     winner = -currPlayer - 1
-#     return nTurns, winner
-
-
 if __name__ == "__main__":
     game = Game(2, verbose=True)
     game.play()
