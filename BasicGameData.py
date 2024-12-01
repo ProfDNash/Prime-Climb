@@ -1,35 +1,61 @@
-"""
-PLAYER class, INITGAME function, ROLLGENERATOR function
-
-@author: David A. Nash
-"""
-
 import numpy as np
 
 
 class Player:
-    def __init__(self, position, cards, cursed):
+    """
+    Class to keep track of the state of a player during the game.
+    Args:
+        low_position: An integer from 0 - 101
+        high_position: An integer from 0 - 101
+            (> than low_position unless both are 0 or both are 101)
+        cards: A list of keeper cards in the players hand
+        cursed: Whether the player has been cursed to only use - or / on next turn
+    """
+
+    def __init__(
+        self,
+        low_position: int = 0,
+        high_position: int = 0,
+        cards: list = None,
+        cursed: bool = False,
+    ):
         self.position = (
-            position  ##An ordered int pair (a,b) with a<b unless a=b=0 or a=b=101
-        )
-        self.cards = cards  ##An int list of the cards in the player's hand
-        self.cursed = cursed  ##True means player can only use - or / on next turn
+            low_position,
+            high_position,
+        )  # Maintain for backwards compatibility for now
+        self.low_position = low_position
+        self.high_position = high_position
+        self.cards = cards if cards is not None else []
+        self.cursed = cursed
+
+    def _validate_positions(self) -> None:
+        """
+        Helper method to ensure low_position < high_position
+        """
+        if (
+            self.low_position < self.high_position
+            or self.low_position == 0
+            or self.high_position == 101
+        ):
+            return None
+
+        self.low_position, self.high_position = self.high_position, self.low_position
+        # Keep general position for now -- remove later
+        self.position = (self.low_position, self.high_position)
 
 
-def initGame(numPlayers):
+# TODO: Create a Game class to handle this
+def initGame(numPlayers: int = 1):
+    """
+    A helper function to initialize a list of players and a deck of cards for a game.
+    """
     if numPlayers < 1 or numPlayers > 4:
-        print("Error, can only be played with 1 to 4 players")
-    else:
-        PlayerList = [
-            Player([0, 0], [], False),
-            Player([0, 0], [], False),
-            Player([0, 0], [], False),
-            Player([0, 0], [], False),
-        ]
-        PlayerList = PlayerList[:numPlayers]
-        ##Shuffle the deck of cards
-        Deck = np.arange(1, 25)
-        Deck = np.random.permutation(Deck)
+        raise ValueError("Error: Can only be played with 1 to 4 players")
+
+    PlayerList = [Player() for _ in range(numPlayers)]
+    ##Shuffle the deck of cards
+    Deck = np.arange(1, 25)
+    Deck = np.random.permutation(Deck)
     return PlayerList, Deck
 
 
