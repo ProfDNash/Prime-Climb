@@ -14,9 +14,9 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 
 import numpy as np
 from Player import Player
-from src.utilities.constants import CARD_PRIMES
+from src.classes.Deck import Deck
+from src.utilities.constants import ActionCards, CARD_PRIMES, KeeperCards
 from cursePlayer import find_curse_target
-from drawACard import drawACard
 from moveMapper import moveMapper
 from sendPlayerHome import find_send_home_target
 
@@ -26,8 +26,7 @@ class Game:
         self.number_of_players = number_of_players
         self.verbose = verbose
         self.players = {idx: Player() for idx in range(self.number_of_players)}
-        self.deck = np.random.permutation(np.arange(1, 25))
-        self.discard_pile = []
+        self.deck = Deck()
         self.number_of_turns = 0
         self.board_spots = np.arange(102)
         self.current_player = 0
@@ -36,6 +35,14 @@ class Game:
 
     def _next_player(self):
         self.current_player = (self.current_player + 1) % self.number_of_players
+
+    def _get_active_pawns(self):
+        # Ignore any pawns which have made it to 101 and left the board
+        all_pawns = []
+        for player in self.players.values():
+            all_pawns += player.position
+
+        return sorted([pawn for pawn in all_pawns if pawn < 101])
 
     def _resolve_collisions(self) -> None:
         """
@@ -59,13 +66,101 @@ class Game:
                 spot if spot not in potential else 0 for spot in player.position
             ]
             new_position.sort()
-            self.players[idx].position = tuple(new_position)
+            self.players[idx].position = new_position
             if self.verbose:
                 print(f"Player {idx} was bumped!")
 
         return None
 
-    def _take_turn(self, PlayerList, Primes, Deck, DiscardPile, Spots):
+    def _apply_action_card(self, card: int, chosen_pawn: int) -> bool:
+        # Cards 14, 15, and 16 correspond to rolling again
+        if card < 17:
+            return True
+
+        new_position = self.players[self.current_player].position
+        if card == 17:  # 50/50 type 1 -- below 50 add 50
+            if new_position[chosen_pawn] < 50:
+                new_position[chosen_pawn] += 50
+            else:
+                new_position[chosen_pawn] -= 50
+
+        if card == 18:  # 50/50 type 2 -- below 50, double
+            if new_position[chosen_pawn] < 50:
+                new_position[chosen_pawn] *= 2
+            else:
+                new_position[chosen_pawn] -= 10
+
+        if card in {19, 20}:  # more forward/backward to nearest pawn
+            active_pawns = self._get_active_pawns()
+            # Find the chosen pawn from among the list
+            idx = active_pawns.index(new_position[chosen_pawn])
+            # To move forward, the chosen pawn can't be farthest forward
+            if idx < len(active_pawns) - 1 and card == 19:
+                new_position[chosen_pawn] = active_pawns[idx + 1]
+            # To move backward, the chosen pawn can't be farthest backward
+            elif idx > 0 and card == 20:
+                new_position[chosen_pawn] = active_pawns[idx - 1]
+
+        if card == 21:  # reverse digits
+            new_position[chosen_pawn] = int(str(new_position[chosen_pawn])[::-1])
+
+        # If there's only one player, swapping pawn is meaningless
+        if card == 22 and self.number_of_players > 1:  # Swap any two pawns
+            # Choose two distinct players
+            player1, player2 = np.random.choice(
+                list(self.players.keys()), size=2, replace=False
+            )
+            new_position1 = self.players[player1].position
+            new_position2 = self.players[player2].position
+            # Choose a pawn for the first player
+            pawn1 = np.random.choice(
+                [idx for idx, pawn in enumerate(new_position1) if pawn != 101]
+            )
+            # Choose a pawn for the second player
+            pawn2 = np.random.choice(
+                [idx for idx, pawn in enumerate(new_position2) if pawn != 101]
+            )
+
+            ##Swap the two pawns
+            new_position1[pawn1], new_position2[pawn2] = (
+                new_position2[pawn2],
+                new_position1[pawn1],
+            )
+            new_position1.sort()
+            new_position2.sort()
+            self.players[player1].position = new_position1
+            self.players[player2].position = new_position2
+            return False
+
+        if card == 23:  # Send to 64
+            new_position[chosen_pawn] = 64
+
+        if card == 24:  # Steal a card
+            # First find the other players who have cards
+            potential_targets = [
+                idx
+                for idx, player in self.players.items()
+                if idx != self.current_player and player.cards
+            ]
+
+            # If at least one other player has cards, choose one randomly
+            # and then choose a random card from their hand
+            if potential_targets:
+                chosen_target = np.random.choice(potential_targets)
+                chosen_card = np.random.choice(self.players[chosen_target].cards)
+                self.players[chosen_target].cards.remove(chosen_card)
+                self.players[self.current_player].cards.append(chosen_card)
+
+        # The player could have landed on themselves
+        if new_position[0] == new_position[1]:
+            new_position[0] = 0
+
+        # Reset the player position in the class attribute
+        self.players[self.current_player].position = new_position
+        return False
+
+    def _take_turn(self):
+        roll_again = False
         ##at the start of the turn, randomly decide whether to curse another player (if the card is available)
         existing_curse_cards = set(
             self.players[self.current_player].cards
@@ -81,19 +176,19 @@ class Game:
             self.players[curse_target].curse()
             # Remove the card that has been played
             self.players[self.current_player].cards.remove(card)
-            self.discard_pile.append(card)
+            self.deck.discard_a_card(card)
 
         ##Get the current player position, roll the dice, and generate the possible moves
-        pos = PlayerList[self.current_player].position
+        old_position = self.players[self.current_player].position
         roll = [np.random.randint(0, 10), np.random.randint(0, 10)]
         if self.verbose:
             print(f"Player {self.current_player} rolled: {roll}")
         possibleMoves = moveMapper(
             roll,
-            pos,
-            PlayerList[self.current_player].cards,
-            PlayerList[self.current_player].cursed,
-            Spots,
+            old_position,
+            self.players[self.current_player].cards,
+            self.players[self.current_player].cursed,
+            Spots=self.board_spots,
         )
 
         ##choose to win if you can
@@ -101,7 +196,7 @@ class Game:
             Move = np.array([101, 101]).reshape((1, 2))
             print(f"Player {self.current_player} wins!!!!")
             self.game_over = True
-            return PlayerList, Deck, DiscardPile
+            return None
         ##if 101 is an option for pawn2, don't consider other options
         elif 101 in possibleMoves:
             ##find indices of moves with 101 as one of the positions
@@ -134,11 +229,11 @@ class Game:
             if Move[2] != 100000000000:
                 for i in range(1, len(str(Move[2]))):
                     if str(Move[2])[i] == "1":
-                        PlayerList[self.current_player].cards.remove(i)
-                        DiscardPile.append(i)
+                        self.players[self.current_player].cards.remove(i)
+                        self.deck.discard_a_card(i)
 
         ##Change the current player's position to the newly chosen one (drop the card encoding)
-        PlayerList[self.current_player].position = Move[0:2]
+        self.players[self.current_player].position = list(Move[0:2])
         if self.verbose:
             print(f"Player {self.current_player} moves to: {Move[0:2]}")
 
@@ -161,44 +256,51 @@ class Game:
             send_home_target, send_home_pawn = find_send_home_target(
                 current_player=self.current_player, players=self.players
             )
+            print(f"{send_home_target=}, {send_home_pawn=}")
             # bump that pawn back to start and discard the card played
             self.players[send_home_target].position[send_home_pawn] = 0
             self.players[send_home_target].position.sort()
             self.players[self.current_player].cards.remove(card)
-            self.discard_pile.append(card)
+            self.deck.discard_a_card(card)
 
         ## after all actions, check to see if they get to draw a card
-        rollAgain, PlayerList, Deck, DiscardPile = drawACard(
-            self.current_player, pos, Move[0:2], PlayerList, Primes, Deck, DiscardPile
-        )
+        pawn_on_prime = self.players[self.current_player].landed_on_prime(old_position)
+        if any(pawn_on_prime):
+            new_card = self.deck.draw_a_card()
+        else:
+            new_card = None
+
+        if new_card in KeeperCards:
+            self.players[self.current_player].cards.append(new_card)
+
+        if new_card in ActionCards:
+            # For many of these actions, we must apply the action to the pawn which drew
+            # the card. If both are on new primes, we'll choose one randomly
+            chosen_pawn = np.random.choice(
+                [idx for idx, flag in enumerate(pawn_on_prime) if flag]
+            )
+            roll_again = self._apply_action_card(card=new_card, chosen_pawn=chosen_pawn)
+            self.deck.discard_a_card(new_card)
 
         # Drawing an action card could cause another collision. So re-resolve
         self._resolve_collisions()
 
-        if rollAgain:  ##take another turn!
+        if roll_again:
             if self.verbose:
                 print(f"Player {self.current_player} gets to roll again!")
 
-            return PlayerList, Deck, DiscardPile
+            return None
         else:  ##move to next player
             self._next_player()
-            return PlayerList, Deck, DiscardPile
+            return None
 
     def play(self):
         """
         Method which plays the game until someone wins
         """
         while not self.game_over:
-            intermediate_players, self.deck, self.discard_pile = self._take_turn(
-                PlayerList=list(self.players.values()),
-                Primes=self.card_primes,
-                Deck=self.deck,
-                DiscardPile=self.discard_pile,
-                Spots=self.board_spots,
-            )
-            self.players = {
-                idx: player for idx, player in enumerate(intermediate_players)
-            }
+            self._take_turn()
+            print(self.deck)
             self.number_of_turns += 1
             if self.number_of_turns > 1000:
                 print("Something is wrong")  ##for debugging
