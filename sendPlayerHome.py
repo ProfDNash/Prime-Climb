@@ -16,36 +16,30 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 import numpy as np
 
 
-def sendPlayerHome(card, playerNum, PlayerList, DiscardPile):
-    if card != 10 and card != 11:
-        print("Error.  You cannot bump with card ", card)  ##for debugging
-    else:
-        ##check whether any other players are away from the start (position 0)
-        offStart = (
-            []
-        )  ##initialize a list of tuples of the form (player_index,pawn_index)
-        for idx, player in enumerate(PlayerList):
-            if idx == playerNum:
-                # sending self home is take care of during moveMapper
-                continue
-            else:
-                ##cannot bump pawns on 0 or 101
-                if player.position[1] != 0 and player.position[1] != 101:
-                    offStart.append([idx, 1])
-                    if (
-                        player.position[0] != 0
-                    ):  ##if pos[0]==101, then the game should be over
-                        offStart.append([idx, 0])
-        if len(offStart) > 0:  ##then there are pawns to bump which aren't at the start
-            ##choose a random player and pawn from the list of options
-            playerChosen, pawnChosen = offStart[np.random.randint(0, len(offStart))]
-            ##bump that pawn back to start and discard the card played
-            PlayerList[playerChosen].position[pawnChosen] = 0
-            PlayerList[
-                playerChosen
-            ].position.sort()  ##re-sort the position into increasing order
-            PlayerList[playerNum].cards.remove(card)
-            DiscardPile.append(card)
-        else:
-            print("No one to bump.")  ##for debugging
-    return PlayerList, DiscardPile
+def find_send_home_target(current_player: int, players: dict) -> tuple:
+    """
+    Helper function to find all pawns (identified by player and index) which
+    are not on the start (0) or the end (101) and which can be bumped back to start
+    Args:
+        current_player (int): the index of the current player
+        players (dict): A dictionary of Player classes
+
+    output:
+        player_to_send_home: A tuple of the chosen player index and pawn index
+    """
+    potential_targets = [
+        (idx, pos)
+        for idx, player in players.items()
+        for pos, spot in enumerate(player.position)
+        if idx != current_player and spot not in {0, 101}
+    ]
+
+    if not potential_targets:
+        print("No one to bump")  # For debugging
+        return None
+
+    ##choose a random player and pawn from the list of options
+    choice = np.random.choice(range(len(potential_targets)))
+    player_pawn_to_send_home = potential_targets[choice]
+
+    return player_pawn_to_send_home
