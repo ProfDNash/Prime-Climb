@@ -16,7 +16,7 @@ Note: (1) Due to the rules of Prime Climb, no pawns can leave position 101.
 import numpy as np
 
 
-def find_send_home_target(current_player: int, players: list) -> tuple:
+def find_send_home_target(current_player: int, players: dict) -> tuple:
     """
     Helper function to find all pawns (identified by player and index) which
     are not on the start (0) or the end (101) and which can be bumped back to start
@@ -39,6 +39,7 @@ def find_send_home_target(current_player: int, players: list) -> tuple:
         return None
 
     ##choose a random player and pawn from the list of options
-    player_pawn_to_send_home = np.random.choice(potential_targets)
+    choice = np.random.choice(range(len(potential_targets)))
+    player_pawn_to_send_home = potential_targets[choice]
 
     return player_pawn_to_send_home

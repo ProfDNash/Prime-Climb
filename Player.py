@@ -1,4 +1,5 @@
 import numpy as np
+from src.utilities.constants import CARD_PRIMES
 
 
 class Player:
@@ -14,40 +15,36 @@ class Player:
 
     def __init__(
         self,
-        low_position: int = 0,
-        high_position: int = 0,
+        position1: int = 0,
+        position2: int = 0,
         cards: list = None,
         cursed: bool = False,
     ):
-        self.position = (
-            low_position,
-            high_position,
-        )  # Maintain for backwards compatibility for now
-        self.low_position = low_position
-        self.high_position = high_position
+        self.position = [position1, position2]
+        self._validate_positions()
         self.cards = cards if cards is not None else []
         self.cursed = cursed
 
     def _validate_positions(self) -> None:
-        """
-        Helper method to ensure low_position < high_position
-        """
-        if (
-            self.low_position < self.high_position
-            or self.low_position == 0
-            or self.high_position == 101
-        ):
-            return None
-
-        self.low_position, self.high_position = self.high_position, self.low_position
-        # Keep general position for now -- remove later
-        self.position = (self.low_position, self.high_position)
+        self.position.sort()
 
     def curse(self):
         if self.cursed:
             raise Exception("Cannot curse a player that is already cursed")
 
         self.cursed = True
+
+    def landed_on_prime(self, old_position: list) -> list:
+        """
+        Helper function to determine whether a pawn *moved* to a new prime
+        Note: Given how things are currently tracked, this logic is not strictly correct
+        """
+        on_a_prime = [False, False]
+        for idx, spot in enumerate(self.position):
+            if spot not in old_position and spot in CARD_PRIMES:
+                on_a_prime[idx] = True
+
+        return on_a_prime
 
 
 def rollGenerator(n):
